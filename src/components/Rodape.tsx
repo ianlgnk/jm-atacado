@@ -20,7 +20,14 @@ export function Rodape() {
         <div className="cred">
           Preços de atacado por par. Estoque, frete e pagamento são confirmados pela vendedora.
           <br />
-          Site por Ian LGNK Consultoria
+          Site por{" "}
+          <a
+            href={`https://wa.me/5533988429751?text=${encodeURIComponent(`Olá, Ian! Vi o site da ${LOJA.nome} e quero saber mais sobre o seu trabalho.`)}`}
+            target="_blank"
+            rel="noopener"
+          >
+            Ian LGNK Consultoria
+          </a>
         </div>
       </div>
     </footer>
