@@ -35,7 +35,7 @@ https://ianlgnk.github.io/jm-atacado/?v=fabiola
 https://ianlgnk.github.io/jm-atacado/linha/al/?v=fabiola
 ```
 
-Quem abre por esse link manda o pedido, as dúvidas e a pergunta de reposição para o WhatsApp desse vendedor, e o aparelho guarda a escolha para as próximas visitas. Se a pessoa abrir depois o link de outro vendedor, passa a valer o novo. Sem `?v=`, vale o atendimento da loja. O "Compartilhar" de uma linha leva o `?v=` junto.
+Quem abre por esse link manda o pedido, as dúvidas e a pergunta de reposição para o WhatsApp desse vendedor, e o aparelho guarda a escolha para as próximas visitas. Se a pessoa abrir depois o link de outro vendedor, passa a valer o novo. Sem `?v=`, vai para o vendedor padrão (`VENDEDOR_PADRAO`, hoje a Fabíola). O "Compartilhar" de uma linha leva o `?v=` junto.
 
 Para pôr um vendedor novo, acrescente uma linha em `VENDEDORES` com id, nome e WhatsApp (só dígitos, com 55 e DDD).
 
