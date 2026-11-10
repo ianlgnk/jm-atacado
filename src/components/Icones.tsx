@@ -20,23 +20,23 @@ export const IconeLupa = ({ className }: P) => (
 
 export const IconeSacola = ({ className }: P) => (
   <svg {...base} className={className}>
-    <path d="M5.5 8h13l-1 12h-11l-1-12Z" />
-    <path d="M9 8V7a3 3 0 0 1 6 0v1" />
+    <path d="M7.1 8h9.8c.8 0 1.5.6 1.6 1.4l.9 8.6a2.4 2.4 0 0 1-2.4 2.7H7a2.4 2.4 0 0 1-2.4-2.7l.9-8.6C5.6 8.6 6.3 8 7.1 8Z" />
+    <path d="M9 10.5V7.4a3 3 0 0 1 6 0v3.1" />
   </svg>
 );
 
 export const IconeCasa = ({ className }: P) => (
   <svg {...base} className={className}>
-    <path d="M4 10.5 12 4l8 6.5V20h-5v-5.5H9V20H4v-9.5Z" />
+    <path d="M4.5 10.6 11.1 5a1.4 1.4 0 0 1 1.8 0l6.6 5.6c.3.3.5.7.5 1.1v7.1c0 .9-.7 1.7-1.7 1.7H15v-4.6a3 3 0 0 0-6 0v4.6H5.7c-1 0-1.7-.8-1.7-1.7v-7.1c0-.4.2-.8.5-1.1Z" />
   </svg>
 );
 
 export const IconeGrade = ({ className }: P) => (
   <svg {...base} className={className}>
-    <rect x="4" y="4" width="7" height="7" rx="1.5" />
-    <rect x="13" y="4" width="7" height="7" rx="1.5" />
-    <rect x="4" y="13" width="7" height="7" rx="1.5" />
-    <rect x="13" y="13" width="7" height="7" rx="1.5" />
+    <rect x="4" y="4" width="6.6" height="6.6" rx="2.4" />
+    <rect x="13.4" y="4" width="6.6" height="6.6" rx="2.4" />
+    <rect x="4" y="13.4" width="6.6" height="6.6" rx="2.4" />
+    <rect x="13.4" y="13.4" width="6.6" height="6.6" rx="3.3" />
   </svg>
 );
 

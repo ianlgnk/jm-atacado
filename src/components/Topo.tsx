@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useSyncExternalStore } from "react";
 import { LOJA } from "@/config/loja";
 import { focarCampoTemporario, pedirBusca } from "@/lib/busca";
 import { img } from "@/lib/caminho";
@@ -16,11 +17,19 @@ const LINKS = [
   { href: "/#como", rotulo: "Como funciona" },
 ];
 
+// Na página inicial o topo fica transparente sobre o vídeo e ganha fundo depois que a pessoa rola.
+const assinarRolagem = (f: () => void) => {
+  window.addEventListener("scroll", f, { passive: true });
+  return () => window.removeEventListener("scroll", f);
+};
+const rolou = () => window.scrollY > 24;
+
 export function Topo() {
   const caminho = usePathname();
   const router = useRouter();
   const e = usePedido();
   const aberto = usePainel();
+  const passouDaCapa = useSyncExternalStore(assinarRolagem, rolou, () => false);
   const t = totais(e.itens);
   const naFinalizacao = caminho.startsWith("/pedido") || caminho.startsWith("/pagamento");
   const ativo = (href: string) =>
@@ -34,7 +43,7 @@ export function Topo() {
   );
 
   return (
-    <header className="topo">
+    <header className={`topo${caminho === "/" ? " flutuante" : ""}${caminho === "/" && passouDaCapa ? " rolou" : ""}`}>
       <div className="wrap">
         <Link className="marca" href="/" aria-label={`${LOJA.nome}, início`}>
           <img src={img("logo-160.jpg")} alt="" width={34} height={34} />

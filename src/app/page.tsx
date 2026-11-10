@@ -26,7 +26,7 @@ const CONFIANCA = [
 export default function Inicio() {
   return (
     <>
-      <section className="wrap capa">
+      <section className="capa">
         <div className="capa-cartao">
           <VideoCapa className="capa-video" />
           <div className="capa-texto">
