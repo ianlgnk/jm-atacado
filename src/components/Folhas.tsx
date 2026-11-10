@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CATEGORIAS, VARIACOES, linhaPorId, paresPorGrade } from "@/data/catalogo";
 import { img } from "@/lib/caminho";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
+import { prenderFocoEm } from "@/lib/foco";
 import { fecharFolha, useFolha } from "@/lib/folhas";
 import { brl, plural } from "@/lib/formato";
 import { abrirSeTelaLarga } from "@/lib/painel";
@@ -19,12 +20,14 @@ export function Folhas() {
   useEffect(() => {
     if (!folha) return;
     const antes = document.activeElement as HTMLElement | null;
+    const soltar = prenderFocoEm(veu.current);
     const esc = (ev: KeyboardEvent) => ev.key === "Escape" && fecharFolha();
     document.addEventListener("keydown", esc);
     veu.current?.querySelector<HTMLElement>("[data-foco]")?.focus();
     return () => {
       document.removeEventListener("keydown", esc);
-      antes?.focus?.();
+      soltar();
+      if (antes && document.contains(antes)) antes.focus({ preventScroll: true });
     };
   }, [folha]);
 

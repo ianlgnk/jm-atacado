@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { usePedido } from "@/lib/carrinho";
+import { prenderFocoEm } from "@/lib/foco";
 import { brl, plural } from "@/lib/formato";
 import { fecharPainel, usePainel, useTelaLarga } from "@/lib/painel";
 import { grupos, totais } from "@/lib/pedido";
@@ -19,6 +20,7 @@ export function PainelPedido() {
   const caminho = usePathname();
   const e = usePedido();
   const titulo = useRef<HTMLHeadingElement>(null);
+  const painel = useRef<HTMLElement>(null);
   const naFinalizacao = caminho.startsWith("/pedido") || caminho.startsWith("/pagamento");
   const visivel = aberto && !naFinalizacao;
 
@@ -29,12 +31,19 @@ export function PainelPedido() {
 
   useEffect(() => {
     if (!visivel) return;
+    // No celular o painel é uma folha modal: prende o foco nele e devolve ao fechar.
+    const antes = document.activeElement as HTMLElement | null;
+    const soltar = larga ? () => {} : prenderFocoEm(painel.current);
     if (!larga) titulo.current?.focus();
     const esc = (ev: KeyboardEvent) => {
       if (ev.key === "Escape" && !document.querySelector(".veu")) fecharPainel();
     };
     document.addEventListener("keydown", esc);
-    return () => document.removeEventListener("keydown", esc);
+    return () => {
+      document.removeEventListener("keydown", esc);
+      soltar();
+      if (!larga && antes && document.contains(antes)) antes.focus({ preventScroll: true });
+    };
   }, [visivel, larga]);
 
   if (!visivel) return null;
@@ -48,7 +57,7 @@ export function PainelPedido() {
   return (
     <>
       {!larga && <div className="painel-veu" onClick={fecharPainel} aria-hidden="true" />}
-      <aside className="painel" role={larga ? "complementary" : "dialog"} aria-modal={larga ? undefined : true} aria-labelledby="painel-t">
+      <aside ref={painel} className="painel" role={larga ? "complementary" : "dialog"} aria-modal={larga ? undefined : true} aria-labelledby="painel-t">
         <div className="painel-cab">
           <div>
             <h2 id="painel-t" ref={titulo} tabIndex={-1}>

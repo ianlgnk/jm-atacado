@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 import { LOJA, linkWhatsAppVendedora } from "@/config/loja";
 import { pedido, usePedido } from "@/lib/carrinho";
@@ -24,7 +23,11 @@ export function Pagamento() {
 
   useEffect(() => {
     if (!codigoPix) return;
-    QRCode.toString(codigoPix, { type: "svg", margin: 1, errorCorrectionLevel: "M" }).then(setSvg).catch(() => setSvg(""));
+    // A biblioteca de QR Code só é baixada quando há chave Pix configurada.
+    import("qrcode")
+      .then(({ default: QRCode }) => QRCode.toString(codigoPix, { type: "svg", margin: 1, errorCorrectionLevel: "M" }))
+      .then(setSvg)
+      .catch(() => setSvg(""));
   }, [codigoPix]);
 
   if (!t.modelos && !enviado) {

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo } from "next/font/google";
 import { AbasMobile } from "@/components/AbasMobile";
+import { BarraRolagem } from "@/components/BarraRolagem";
 import { Folhas } from "@/components/Folhas";
 import { PainelPedido } from "@/components/PainelPedido";
 import { Rodape } from "@/components/Rodape";
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <AbasMobile />
         <PainelPedido />
         <Folhas />
+        <BarraRolagem />
       </body>
     </html>
   );

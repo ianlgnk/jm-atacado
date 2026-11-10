@@ -42,3 +42,11 @@ next-env.d.ts
 
 # local
 .claude/
+
+# direção visual (skill de design): versionada neste projeto, mesmo com .impeccable/ no gitignore global
+!.impeccable/
+.impeccable/questions/
+.impeccable/hook.cache.json
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/config.local.json
