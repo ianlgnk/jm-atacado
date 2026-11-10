@@ -6,6 +6,7 @@ import { Folhas } from "@/components/Folhas";
 import { PainelPedido } from "@/components/PainelPedido";
 import { Rodape } from "@/components/Rodape";
 import { Topo } from "@/components/Topo";
+import { CapturaVendedor } from "@/components/WhatsAppAtendimento";
 import { LOJA } from "@/config/loja";
 import "./globals.css";
 
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <PainelPedido />
         <Folhas />
         <BarraRolagem />
+        <CapturaVendedor />
       </body>
     </html>
   );

@@ -6,15 +6,11 @@ export type CategoriaId = "chinelos" | "tenis";
 
 export type Tamanho = { n: string; q: number };
 
-export type Categoria = {
-  id: CategoriaId;
-  nome: string;
-  comissaoPorPar: number; // R$ de comissão por par vendido
-};
+export type Categoria = { id: CategoriaId; nome: string };
 
 export const CATEGORIAS: Record<CategoriaId, Categoria> = {
-  chinelos: { id: "chinelos", nome: "Chinelos", comissaoPorPar: 0.5 },
-  tenis: { id: "tenis", nome: "Tênis", comissaoPorPar: 1 },
+  chinelos: { id: "chinelos", nome: "Chinelos" },
+  tenis: { id: "tenis", nome: "Tênis" },
 };
 
 // Cada linha vende numa grade fechada de 12 pares; a numeração muda com o público.

@@ -1,7 +1,7 @@
 // Contas do pedido e a mensagem que vai para o WhatsApp da loja.
 
 import { LOJA } from "@/config/loja";
-import { CATEGORIAS, GRADES, LINHAS, linhaDaVariacao, ordemNumeracao, type CategoriaId, type Linha, type Tamanho, type Variacao } from "@/data/catalogo";
+import { GRADES, LINHAS, linhaDaVariacao, ordemNumeracao, type Linha, type Tamanho, type Variacao } from "@/data/catalogo";
 import type { Estado, Item, SeFaltar } from "./carrinho";
 import { brl, plural } from "./formato";
 
@@ -32,13 +32,10 @@ export type Totais = {
   avulsos: number;
   pares: number;
   valor: number;
-  comissao: number;
-  paresPorCategoria: { nome: string; pares: number; taxa: number }[];
 };
 
 export function totais(itens: Estado["itens"]): Totais {
-  const t: Totais = { modelos: 0, grades: 0, avulsos: 0, pares: 0, valor: 0, comissao: 0, paresPorCategoria: [] };
-  const porCat = new Map<CategoriaId, number>();
+  const t: Totais = { modelos: 0, grades: 0, avulsos: 0, pares: 0, valor: 0 };
   for (const [cod, it] of Object.entries(itens)) {
     const l = linhaDaVariacao(cod);
     if (!l) continue;
@@ -49,10 +46,7 @@ export function totais(itens: Estado["itens"]): Totais {
     t.avulsos += totalAvulsos(cod, it);
     t.pares += p;
     t.valor += p * l.preco;
-    t.comissao += p * CATEGORIAS[l.categoria].comissaoPorPar;
-    porCat.set(l.categoria, (porCat.get(l.categoria) ?? 0) + p);
   }
-  t.paresPorCategoria = [...porCat].map(([c, pares]) => ({ nome: CATEGORIAS[c].nome.toLowerCase(), pares, taxa: CATEGORIAS[c].comissaoPorPar }));
   return t;
 }
 
@@ -146,11 +140,6 @@ export function mensagem(e: Estado) {
   L.push(`Numeração: ${porNumeracaoGeral(e.itens).map((x) => `${x.n}: ${x.pares}`).join(" · ")}`);
   for (const id of [...new Set(gs.map((g) => g.linha.gradeId))]) {
     L.push(`1 grade ${GRADES[id].nome} = ${GRADES[id].tamanhos.map((g) => `${g.n} ×${g.q}`).join(" · ")}`);
-  }
-
-  if (LOJA.comissaoNaMensagem && t.pares) {
-    const contas = t.paresPorCategoria.map((x) => `${x.pares} × ${brl(x.taxa)}`).join(" + ");
-    L.push(`Comissão: ${contas} = ${brl(t.comissao)}`);
   }
 
   if (c.obs.trim()) L.push("", `Obs.: ${c.obs.trim()}`);

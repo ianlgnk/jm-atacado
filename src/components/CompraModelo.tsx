@@ -2,6 +2,7 @@
 
 import { linhaPorId, paresDaGrade, VARIACOES } from "@/data/catalogo";
 import { LOJA, linkWhatsApp } from "@/config/loja";
+import { useAtendimento } from "@/lib/vendedor";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { brl, plural } from "@/lib/formato";
 import { abrirPainel, abrirSeTelaLarga } from "@/lib/painel";
@@ -14,6 +15,7 @@ export function CompraModelo({ cod }: { cod: string }) {
   const linha = linhaPorId(v.linhaId)!;
   const grade = linha.grade;
   const e = usePedido();
+  const { whatsapp } = useAtendimento();
   const it = itemDe(e, cod);
   const pares = paresDoItem(cod, it);
   const grades = gradesCompletas(cod, it);
@@ -29,7 +31,7 @@ export function CompraModelo({ cod }: { cod: string }) {
     return (
       <div className="compra esgotado">
         <p>Esta cor está esgotada no momento.</p>
-        <a className="btn btn-contorno" href={linkWhatsApp(`Olá! O ${v.cod} ${v.nome} (${linha.nome}) vai voltar? Vim pelo catálogo da ${LOJA.nome}.`)} target="_blank" rel="noopener">
+        <a className="btn btn-contorno" href={linkWhatsApp(`Olá! O ${v.cod} ${v.nome} (${linha.nome}) vai voltar? Vim pelo catálogo da ${LOJA.nome}.`, whatsapp)} target="_blank" rel="noopener">
           Perguntar sobre reposição
         </a>
       </div>

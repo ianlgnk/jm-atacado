@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LOJA, linkWhatsApp } from "@/config/loja";
+import { useAtendimento } from "@/lib/vendedor";
 import { pedido, usePedido } from "@/lib/carrinho";
 import { brl } from "@/lib/formato";
 import { faltandoNoFormulario, mensagem, totais } from "@/lib/pedido";
@@ -11,6 +12,7 @@ import { IconeCopiar, IconeVoltar, IconeWhatsApp } from "./Icones";
 
 export function Pagamento() {
   const e = usePedido();
+  const { whatsapp } = useAtendimento();
   const t = totais(e.itens);
   const [svg, setSvg] = useState("");
   const [copiado, setCopiado] = useState(false);
@@ -77,7 +79,7 @@ export function Pagamento() {
               : "Confira a mensagem e toque em enviar. A loja confere o estoque e combina com você o frete e a forma de pagamento."}
         </p>
         <div className="ctas" style={{ justifyContent: "center" }}>
-          <a className="btn btn-wa" href={linkWhatsApp(mensagem(e))} target="_blank" rel="noopener" style={{ width: "auto" }}>
+          <a className="btn btn-wa" href={linkWhatsApp(mensagem(e), whatsapp)} target="_blank" rel="noopener" style={{ width: "auto" }}>
             <IconeWhatsApp /> Abrir o WhatsApp de novo
           </a>
           <button
@@ -147,7 +149,7 @@ export function Pagamento() {
           </p>
           <a
             className="btn btn-wa"
-            href={linkWhatsApp(mensagem(e))}
+            href={linkWhatsApp(mensagem(e), whatsapp)}
             target="_blank"
             rel="noopener"
             onClick={() => {

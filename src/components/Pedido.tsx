@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { LOJA } from "@/config/loja";
 import { pedido, usePedido, type Cliente, type FormaPagamento, type SeFaltar } from "@/lib/carrinho";
 import { brl, mascaraTelefone } from "@/lib/formato";
+import { useAtendimento } from "@/lib/vendedor";
 import { TEXTO_SE_FALTAR, faltandoNoFormulario, grupos, porNumeracaoGeral, totais } from "@/lib/pedido";
 import { IconeSeta, IconeVoltar } from "./Icones";
 import { DesfazerRemocao } from "./DesfazerRemocao";
@@ -29,6 +30,7 @@ const OPCOES_FALTA: SeFaltar[] = ["avisar", "trocar", "tirar"];
 
 export function Pedido() {
   const e = usePedido();
+  const { exibir } = useAtendimento();
   const router = useRouter();
   const [tentou, setTentou] = useState(false);
   const t = totais(e.itens);
@@ -198,7 +200,7 @@ export function Pedido() {
               {PIX_NO_SITE && e.pagamento === "pix" ? "Continuar para o pagamento" : "Revisar e enviar"} <IconeSeta />
             </button>
             <p className="nota aviso-envio">
-              O pedido vai para o WhatsApp de atendimento da loja, {LOJA.atendimento.exibir}.
+              O pedido vai para o WhatsApp de atendimento, {exibir}.
             </p>
           </form>
         </aside>

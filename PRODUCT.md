@@ -21,9 +21,9 @@ Catálogo de atacado de Nova Serrana feito para o jeito que esse mercado já com
 ## Operating Context
 
 - O lojista recebe o link pela vendedora e volta a ele para repor.
-- O pedido sai como mensagem de WhatsApp para a vendedora, com número, itens por cor e numeração, totais, comissão e dados do lojista (nome, loja, cidade/UF, telefone, transportadora).
-- A vendedora confere o estoque (parte dos produtos vem de outras fábricas de Nova Serrana, sem estoque exato) e responde com a chave Pix ou combina outra forma de pagamento. O site não recebe pagamento.
-- O financeiro confere o Pix e a comissão (R$ 0,50 por par de chinelo, R$ 1,00 por par de tênis).
+- O pedido sai como mensagem de WhatsApp para quem atende (o vendedor do link `?v=` ou o atendimento da loja), com número, itens por cor e numeração, totais e dados do lojista (nome, loja, cidade/UF, telefone, transportadora). A mensagem não fala de comissão: quem a envia é o lojista.
+- Quem atende confere o estoque (parte dos produtos vem de outras fábricas de Nova Serrana, sem estoque exato) e responde com a chave Pix ou combina outra forma de pagamento. O site não recebe pagamento.
+- O financeiro confere o Pix. A comissão dos vendedores (R$ 0,50 por par de chinelo, R$ 1,00 por par de tênis) é acertada fora do site.
 
 ## Capabilities and Constraints
 

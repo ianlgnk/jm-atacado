@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LOJA, linkWhatsApp } from "@/config/loja";
+import { useAtendimento } from "@/lib/vendedor";
 import { usePedido } from "@/lib/carrinho";
 import { brl, plural } from "@/lib/formato";
 import { abrirPainel, usePainel } from "@/lib/painel";
@@ -14,6 +15,7 @@ import { IconeCasa, IconeGrade, IconeSacola, IconeSeta, IconeWhatsApp } from "./
 export function AbasMobile() {
   const caminho = usePathname();
   const e = usePedido();
+  const { whatsapp } = useAtendimento();
   const aberto = usePainel();
   const t = totais(e.itens);
   const naFinalizacao = caminho.startsWith("/pedido") || caminho.startsWith("/pagamento");
@@ -59,7 +61,7 @@ export function AbasMobile() {
             Pedido
           </button>
         )}
-        <a href={linkWhatsApp(`Olá! Vim pelo catálogo da ${LOJA.nome} e tenho uma dúvida.`)} target="_blank" rel="noopener">
+        <a href={linkWhatsApp(`Olá! Vim pelo catálogo da ${LOJA.nome} e tenho uma dúvida.`, whatsapp)} target="_blank" rel="noopener">
           <IconeWhatsApp />
           WhatsApp
         </a>

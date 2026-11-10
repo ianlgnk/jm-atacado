@@ -21,10 +21,18 @@ export const LOJA = {
     cidade: "NOVA SERRANA", // até 15 letras, sem acento
   },
 
-  // Põe a linha "Comissão" na mensagem do pedido, para o atendimento encaminhar ao financeiro.
-  // Atenção: a mensagem é enviada pelo lojista, então ele também vê essa linha.
-  comissaoNaMensagem: true,
 } as const;
 
-export const linkWhatsApp = (texto: string) =>
-  `https://wa.me/${LOJA.atendimento.whatsapp}?text=${encodeURIComponent(texto)}`;
+export type Atendimento = { whatsapp: string; exibir: string };
+export type Vendedor = Atendimento & { id: string; nome: string };
+
+// Cada vendedor divulga o próprio link: https://ianlgnk.github.io/jm-atacado/?v=<id>
+// (vale para qualquer página, ex.: /linha/al/?v=fabiola). Quem chega por esse link manda o pedido
+// e as dúvidas para o WhatsApp desse vendedor, e o aparelho lembra nas próximas visitas.
+// Sem ?v= o pedido vai para o atendimento da loja, acima. O id vai no link: minúsculo, sem acento nem espaço.
+export const VENDEDORES: Vendedor[] = [
+  { id: "fabiola", nome: "Fabíola", whatsapp: "553791977372", exibir: "(37) 9197-7372" },
+];
+
+export const linkWhatsApp = (texto: string, numero: string = LOJA.atendimento.whatsapp) =>
+  `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
