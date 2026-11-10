@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CardVariacao } from "@/components/CardVariacao";
 import { BotaoCompartilhar } from "@/components/BotaoCompartilhar";
+import { TodasAsCores } from "@/components/TodasAsCores";
 import { CATEGORIAS, LINHAS, linhaPorId, paresPorGrade } from "@/data/catalogo";
 import { brl } from "@/lib/formato";
 
@@ -55,9 +56,10 @@ export default async function PaginaLinha({ params }: PageProps<"/linha/[id]">) 
             ))}
           </div>
           <p className="nota">
-            Toque em <b>+</b> para cada grade fechada. Precisa de outra numeração? Use “Por numeração” no modelo.
+            Toque em <b>+</b> para cada grade fechada, ou monte por numeração no modelo ou na tabela do pedido.
           </p>
           <div className="acoes-det">
+            <TodasAsCores linhaId={l.id} />
             <BotaoCompartilhar linhaId={l.id} />
           </div>
         </div>

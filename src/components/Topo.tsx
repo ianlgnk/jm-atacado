@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { LOJA } from "@/config/loja";
 import { img } from "@/lib/caminho";
 import { usePedido } from "@/lib/carrinho";
+import { alternarPainel, usePainel } from "@/lib/painel";
 import { totais } from "@/lib/pedido";
 import { IconeSacola } from "./Icones";
 
@@ -17,9 +18,16 @@ const LINKS = [
 export function Topo() {
   const caminho = usePathname();
   const e = usePedido();
+  const aberto = usePainel();
   const t = totais(e.itens);
+  const naFinalizacao = caminho.startsWith("/pedido") || caminho.startsWith("/pagamento");
   const ativo = (href: string) =>
     href === "/catalogo/" ? caminho.startsWith("/catalogo") || caminho.startsWith("/linha") : href === "/" && caminho === "/";
+  const conteudo = (
+    <>
+      <IconeSacola /> Pedido <span className={`badge${t.pares ? "" : " zero"}`}>{t.pares}</span>
+    </>
+  );
 
   return (
     <header className="topo">
@@ -38,9 +46,15 @@ export function Topo() {
             </Link>
           ))}
         </nav>
-        <Link className="btn-pedido" href="/pedido/" aria-label={`Pedido: ${t.pares} pares`}>
-          <IconeSacola /> Pedido <span className={`badge${t.pares ? "" : " zero"}`}>{t.pares}</span>
-        </Link>
+        {naFinalizacao ? (
+          <Link className="btn-pedido" href="/pedido/" aria-label={`Pedido: ${t.pares} pares`}>
+            {conteudo}
+          </Link>
+        ) : (
+          <button type="button" className="btn-pedido" onClick={alternarPainel} aria-expanded={aberto} aria-label={`Pedido: ${t.pares} pares`}>
+            {conteudo}
+          </button>
+        )}
       </div>
     </header>
   );

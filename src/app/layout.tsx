@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Manrope, Oswald } from "next/font/google";
 import { BarraPedido } from "@/components/BarraPedido";
 import { Folhas } from "@/components/Folhas";
+import { PainelPedido } from "@/components/PainelPedido";
 import { Rodape } from "@/components/Rodape";
 import { Topo } from "@/components/Topo";
 import { LOJA } from "@/config/loja";
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main id="conteudo">{children}</main>
         <Rodape />
         <BarraPedido />
+        <PainelPedido />
         <Folhas />
       </body>
     </html>

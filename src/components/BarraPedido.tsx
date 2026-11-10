@@ -1,16 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { usePedido } from "@/lib/carrinho";
 import { brl, plural } from "@/lib/formato";
+import { abrirPainel, usePainel } from "@/lib/painel";
 import { totais } from "@/lib/pedido";
 
-// Barra fixa com o resumo do pedido. Some nas telas do próprio pedido.
+// Barra fixa com o resumo do pedido; abre o painel. Some com o painel aberto e na finalização.
 export function BarraPedido() {
   const caminho = usePathname();
   const e = usePedido();
+  const aberto = usePainel();
   const t = totais(e.itens);
   const [pulso, setPulso] = useState(false);
   const anterior = useRef(t.pares);
@@ -24,13 +25,13 @@ export function BarraPedido() {
     }
   }, [t.pares]);
 
-  if (!t.pares || caminho.startsWith("/pedido") || caminho.startsWith("/pagamento")) return null;
+  if (!t.pares || aberto || caminho.startsWith("/pedido") || caminho.startsWith("/pagamento")) return null;
 
   return (
     <>
       <div className="barra-espaco" aria-hidden="true" />
       <div className={`barra${pulso ? " pulso" : ""}`}>
-        <Link href="/pedido/">
+        <button type="button" onClick={abrirPainel} aria-label={`Ver pedido: ${t.pares} pares, ${brl(t.valor)}`}>
           <span className="resumo">
             <b>
               {t.pares} pares · {brl(t.valor)}
@@ -41,7 +42,7 @@ export function BarraPedido() {
             </span>
           </span>
           <span className="ir">Ver pedido →</span>
-        </Link>
+        </button>
       </div>
     </>
   );

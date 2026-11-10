@@ -4,12 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LOJA } from "@/config/loja";
-import { img } from "@/lib/caminho";
-import { pedido, usePedido, type Cliente, type FormaPagamento } from "@/lib/carrinho";
-import { abrirFolha } from "@/lib/folhas";
+import { pedido, usePedido, type Cliente, type FormaPagamento, type SeFaltar } from "@/lib/carrinho";
 import { brl, mascaraTelefone } from "@/lib/formato";
-import { avulsos, descreverItem, faltandoNoFormulario, grupos, paresDoItem, totais } from "@/lib/pedido";
-import { Stepper } from "./Stepper";
+import { TEXTO_SE_FALTAR, faltandoNoFormulario, grupos, porNumeracao, totais } from "@/lib/pedido";
+import { Matriz } from "./Matriz";
+import { RepetirUltimo } from "./RepetirUltimo";
 
 const PIX_NO_SITE = LOJA.pix.chave.trim() !== "";
 
@@ -24,23 +23,30 @@ const PAGAMENTOS: { id: FormaPagamento; titulo: string; texto: string }[] = [
   { id: "combinar", titulo: "Combinar no WhatsApp", texto: "Boleto, cartão ou outra forma: você acerta com a vendedora na conversa." },
 ];
 
+const OPCOES_FALTA: SeFaltar[] = ["avisar", "trocar", "tirar"];
+
 export function Pedido() {
   const e = usePedido();
   const router = useRouter();
   const [tentou, setTentou] = useState(false);
   const t = totais(e.itens);
+  const gs = grupos(e.itens, true);
   const falta = faltandoNoFormulario(e);
   const invalido = (k: keyof Cliente) => tentou && falta.includes(k);
+  const categorias = [...new Set(grupos(e.itens).map((g) => g.linha.categoria))];
 
-  if (!t.modelos) {
+  if (!gs.length) {
     return (
       <div className="vazio">
         <span className="eyebrow">Seu pedido</span>
         <h1 className="titulo">Seu pedido está vazio</h1>
         <p className="sub">Escolha os modelos e as grades no catálogo. Eles aparecem aqui, prontos para enviar.</p>
-        <Link className="btn btn-ouro" href="/catalogo/">
-          Ver catálogo →
-        </Link>
+        <div className="ctas" style={{ justifyContent: "center" }}>
+          <Link className="btn btn-ouro" href="/catalogo/">
+            Ver catálogo →
+          </Link>
+          <RepetirUltimo />
+        </div>
       </div>
     );
   }
@@ -71,6 +77,7 @@ export function Pedido() {
       document.getElementById(`f-${falta[0]}`)?.focus();
       return;
     }
+    if (!t.pares) return;
     router.push("/pagamento/");
   }
 
@@ -80,60 +87,12 @@ export function Pedido() {
         ← Continuar escolhendo
       </Link>
       <h1 className="titulo">Seu pedido</h1>
-      <p className="sub">Confira os modelos, preencha seus dados e escolha como pagar.</p>
+      <p className="sub">Confira os pares por cor e numeração, preencha seus dados e escolha como pagar.</p>
       <div className="pedido">
-        <div>
-          {grupos(e.itens).map(({ linha, vars }) => {
-            const pares = vars.reduce((a, v) => a + paresDoItem(v.cod, e.itens[v.cod]), 0);
-            return (
-              <div className="bloco" key={linha.id}>
-                <h3>
-                  {linha.nome}
-                  <span>{brl(linha.preco)} o par</span>
-                </h3>
-                {vars.map((v) => {
-                  const it = e.itens[v.cod];
-                  const p = paresDoItem(v.cod, it);
-                  return (
-                    <div className="item" key={v.cod}>
-                      <img src={img(`${v.foto}-480.jpg`)} alt="" loading="lazy" />
-                      <div>
-                        <div className="cab-item">
-                          <b>
-                            {v.cod} · {v.nome}
-                          </b>
-                          <span>{brl(p * linha.preco)}</span>
-                        </div>
-                        <div className="detalhe">
-                          {p} pares · {descreverItem(v.cod, it)}
-                        </div>
-                        <div className="acoes">
-                          <Stepper
-                            valor={it.g}
-                            rotulo={["grade", "grades"]}
-                            nome={`Grades fechadas de ${v.cod}`}
-                            onMais={() => pedido.maisGrade(v.cod)}
-                            onMenos={() => pedido.menosGrade(v.cod)}
-                            desativado={v.esgotado}
-                          />
-                          <button type="button" className="link-num" onClick={() => abrirFolha({ tipo: "numeracao", cod: v.cod })}>
-                            {avulsos(it) ? "Editar avulsos" : "Avulsos por numeração"}
-                          </button>
-                          <button type="button" className="remover" onClick={() => pedido.remover(v.cod)}>
-                            Remover
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-                <div className="subtotal">
-                  <span>{pares} pares</span>
-                  <b>{brl(pares * linha.preco)}</b>
-                </div>
-              </div>
-            );
-          })}
+        <div className="pedido-itens">
+          {gs.map((g) => (
+            <Matriz key={g.linha.id} linha={g.linha} vars={g.vars} />
+          ))}
         </div>
 
         <aside>
@@ -157,6 +116,16 @@ export function Pedido() {
               <span>Total de pares</span>
               <b>{t.pares}</b>
             </div>
+            {categorias.map((cat) => (
+              <div className="por-numeracao" key={cat}>
+                {porNumeracao(e.itens, cat).map((x) => (
+                  <span key={x.n}>
+                    <small>{x.n}</small>
+                    <b>{x.pares}</b>
+                  </span>
+                ))}
+              </div>
+            ))}
             <div className="l total">
               <span>Total</span>
               <span>{brl(t.valor)}</span>
@@ -177,6 +146,19 @@ export function Pedido() {
             </div>
             {campo("telefone", "Telefone para contato", { type: "tel", inputMode: "tel", autoComplete: "tel", placeholder: "(00) 00000-0000", required: true })}
             {campo("transportadora", "Transportadora", { opcional: true, placeholder: "Ex.: a que você já usa, ou retirar na fábrica" })}
+
+            <fieldset className="pagamentos">
+              <legend className="lbl-campo">Se faltar alguma cor</legend>
+              {OPCOES_FALTA.map((op) => (
+                <label key={op} className={`opcao compacta${e.seFaltar === op ? " marcada" : ""}`}>
+                  <input type="radio" name="se-faltar" value={op} checked={e.seFaltar === op} onChange={() => pedido.seFaltar(op)} />
+                  <span>
+                    <b>{TEXTO_SE_FALTAR[op].titulo}</b>
+                  </span>
+                </label>
+              ))}
+            </fieldset>
+
             <div className="campo">
               <label htmlFor="f-obs">
                 Observações <i>(opcional)</i>
@@ -202,10 +184,17 @@ export function Pedido() {
                 Preencha nome, cidade, UF e telefone para a vendedora saber de quem é o pedido.
               </p>
             )}
+            {tentou && !t.pares && (
+              <p className="erro" role="alert">
+                O pedido está sem pares. Preencha a tabela ou use “+ grade”.
+              </p>
+            )}
             <button type="submit" className="btn btn-ouro largo">
               {PIX_NO_SITE && e.pagamento === "pix" ? "Continuar para o pagamento →" : "Revisar e enviar →"}
             </button>
-            <p className="nota aviso-envio">O pedido vai para o WhatsApp de {LOJA.vendedora.nome}, {LOJA.vendedora.exibir}.</p>
+            <p className="nota aviso-envio">
+              O pedido vai para o WhatsApp de {LOJA.vendedora.nome}, {LOJA.vendedora.exibir}.
+            </p>
           </form>
         </aside>
       </div>

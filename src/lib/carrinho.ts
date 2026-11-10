@@ -1,12 +1,14 @@
 "use client";
 
 // Estado do pedido, salvo no aparelho do lojista (localStorage). Sem servidor por enquanto.
+// Cada modelo guarda os pares por numeração; "grade" é só um atalho que soma 2-4-4-2 na linha.
 
 import { useSyncExternalStore } from "react";
 import { LOJA } from "@/config/loja";
-import { VARIACOES } from "@/data/catalogo";
+import { CATEGORIAS, VARIACOES, linhaDaVariacao, linhaPorId } from "@/data/catalogo";
+import { gradesCompletas, paresDoItem } from "./pedido";
 
-export type Item = { g: number; s: Record<string, number> }; // g = grades fechadas, s = pares avulsos por numeração
+export type Item = { p: Record<string, number> }; // pares por numeração, ex.: { "35/36": 8 }
 
 export type Cliente = {
   nome: string;
@@ -19,22 +21,58 @@ export type Cliente = {
 };
 
 export type FormaPagamento = "pix" | "combinar";
+export type SeFaltar = "avisar" | "trocar" | "tirar";
+
+export type UltimoPedido = { itens: Record<string, Item>; quando: string; pares: number };
 
 export type Estado = {
   itens: Record<string, Item>;
   numero: string;
   pagamento: FormaPagamento;
+  seFaltar: SeFaltar;
   cliente: Cliente;
+  ultimo: UltimoPedido | null;
 };
 
-const CHAVE = "jm-atacado-pedido-v1";
+const CHAVE = "jm-atacado-pedido-v2";
+const CHAVE_ANTIGA = "jm-atacado-pedido-v1";
 
 const VAZIO: Estado = {
   itens: {},
   numero: "",
   pagamento: "pix",
+  seFaltar: "avisar",
   cliente: { nome: "", loja: "", cidade: "", uf: "", telefone: "", transportadora: "", obs: "" },
+  ultimo: null,
 };
+
+const gradeDe = (cod: string) => CATEGORIAS[linhaDaVariacao(cod)!.categoria].grade;
+
+// Mantém só modelos que existem e números inteiros positivos nas numerações da categoria.
+function limparItens(bruto: unknown): Record<string, Item> {
+  const saida: Record<string, Item> = {};
+  if (!bruto || typeof bruto !== "object") return saida;
+  for (const [cod, it] of Object.entries(bruto as Record<string, { p?: Record<string, unknown> }>)) {
+    if (!VARIACOES[cod] || !it?.p) continue;
+    const p: Record<string, number> = {};
+    for (const t of gradeDe(cod)) {
+      const q = Math.floor(Number(it.p[t.n]) || 0);
+      if (q > 0) p[t.n] = q;
+    }
+    if (Object.keys(p).length) saida[cod] = { p }; // linhas zeradas da tabela não voltam ao recarregar
+  }
+  return saida;
+}
+
+// Pedido salvo pela versão anterior do site: { g: grades, s: avulsos por numeração }.
+function converterAntigo(itens: Record<string, { g?: number; s?: Record<string, number> }>) {
+  const convertido: Record<string, Item> = {};
+  for (const [cod, it] of Object.entries(itens || {})) {
+    if (!VARIACOES[cod]) continue;
+    convertido[cod] = { p: Object.fromEntries(gradeDe(cod).map((t) => [t.n, (it.g ?? 0) * t.q + (it.s?.[t.n] ?? 0)])) };
+  }
+  return convertido;
+}
 
 let estado: Estado = VAZIO;
 let carregado = false;
@@ -44,13 +82,19 @@ function carregar() {
   if (carregado || typeof window === "undefined") return;
   carregado = true;
   try {
-    const s = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    let s = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if (!s) {
+      const antigo = JSON.parse(localStorage.getItem(CHAVE_ANTIGA) || "null");
+      if (antigo) s = { ...antigo, itens: converterAntigo(antigo.itens) };
+    }
     if (s && typeof s === "object") {
       estado = {
-        itens: Object.fromEntries(Object.entries(s.itens || {}).filter(([c]) => VARIACOES[c])) as Record<string, Item>,
+        itens: limparItens(s.itens),
         numero: s.numero || "",
         pagamento: s.pagamento === "combinar" ? "combinar" : "pix",
+        seFaltar: ["avisar", "trocar", "tirar"].includes(s.seFaltar) ? s.seFaltar : "avisar",
         cliente: { ...VAZIO.cliente, ...(s.cliente || {}) },
+        ultimo: s.ultimo?.itens ? { ...s.ultimo, itens: limparItens(s.ultimo.itens) } : null,
       };
     }
   } catch {
@@ -91,31 +135,46 @@ function novoNumero() {
   return `${LOJA.prefixoPedido}-${p(d.getDate())}${p(d.getMonth() + 1)}-${sufixo}`;
 }
 
-const vazio = (it: Item) => it.g === 0 && Object.values(it.s).every((q) => !q);
-
-function gravarItem(cod: string, it: Item) {
+// manterVazio: na tabela, apagar o número de uma célula não some com a linha enquanto o lojista digita.
+function gravarItens(novos: Record<string, Item>, manterVazio = false) {
   mudar((e) => {
     const itens = { ...e.itens };
-    if (vazio(it)) delete itens[cod];
-    else itens[cod] = it;
-    return { ...e, itens, numero: e.numero || novoNumero() };
+    for (const [cod, it] of Object.entries(novos)) {
+      const p = Object.fromEntries(Object.entries(it.p).filter(([, q]) => q > 0));
+      if (Object.keys(p).length || manterVazio) itens[cod] = { p };
+      else delete itens[cod];
+    }
+    return { ...e, itens, numero: Object.keys(itens).length ? e.numero || novoNumero() : e.numero };
   });
 }
 
-export const itemDe = (e: Estado, cod: string): Item => e.itens[cod] ?? { g: 0, s: {} };
+export const itemDe = (e: Estado, cod: string): Item => e.itens[cod] ?? { p: {} };
+
+const somarGrade = (cod: string, it: Item, vezes: number): Item => ({
+  p: Object.fromEntries(gradeDe(cod).map((t) => [t.n, Math.max(0, (it.p[t.n] ?? 0) + t.q * vezes)])),
+});
 
 export const pedido = {
   maisGrade(cod: string) {
-    const it = itemDe(ler(), cod);
-    gravarItem(cod, { ...it, g: it.g + 1 });
+    gravarItens({ [cod]: somarGrade(cod, itemDe(ler(), cod), 1) });
   },
   menosGrade(cod: string) {
     const it = itemDe(ler(), cod);
-    gravarItem(cod, { ...it, g: Math.max(0, it.g - 1) });
+    if (gradesCompletas(cod, it) > 0) gravarItens({ [cod]: somarGrade(cod, it, -1) });
   },
-  definirAvulsos(cod: string, s: Record<string, number>) {
-    const limpo = Object.fromEntries(Object.entries(s).filter(([, q]) => q > 0));
-    gravarItem(cod, { ...itemDe(ler(), cod), s: limpo });
+  definirPar(cod: string, numeracao: string, pares: number) {
+    const it = itemDe(ler(), cod);
+    gravarItens({ [cod]: { p: { ...it.p, [numeracao]: Math.max(0, Math.floor(pares) || 0) } } }, true);
+  },
+  definirPares(cod: string, p: Record<string, number>) {
+    gravarItens({ [cod]: { p } });
+  },
+  // +1 grade em cada cor disponível da linha
+  gradeEmTodas(linhaId: string) {
+    const linha = linhaPorId(linhaId);
+    if (!linha) return;
+    const e = ler();
+    gravarItens(Object.fromEntries(linha.variacoes.filter((v) => !v.esgotado).map((v) => [v.cod, somarGrade(v.cod, itemDe(e, v.cod), 1)])));
   },
   remover(cod: string) {
     mudar((e) => {
@@ -130,7 +189,27 @@ export const pedido = {
   pagamento(forma: FormaPagamento) {
     mudar((e) => ({ ...e, pagamento: forma }));
   },
-  // Limpa os itens e o número, mas guarda os dados do lojista para o próximo pedido.
+  seFaltar(op: SeFaltar) {
+    mudar((e) => ({ ...e, seFaltar: op }));
+  },
+  // Chamado ao abrir o WhatsApp: guarda o pedido para "Repetir último pedido".
+  registrarEnvio() {
+    mudar((e) => ({
+      ...e,
+      ultimo: {
+        itens: e.itens,
+        quando: new Date().toISOString(),
+        pares: Object.entries(e.itens).reduce((a, [cod, it]) => a + paresDoItem(cod, it), 0),
+      },
+    }));
+  },
+  // Põe no pedido os modelos do último envio que ainda não estão esgotados.
+  repetirUltimo() {
+    const u = ler().ultimo;
+    if (!u) return;
+    gravarItens(Object.fromEntries(Object.entries(u.itens).filter(([cod]) => !VARIACOES[cod]?.esgotado)));
+  },
+  // Limpa os itens e o número, mas guarda os dados do lojista e o último pedido.
   novo() {
     mudar((e) => ({ ...e, itens: {}, numero: "" }));
   },

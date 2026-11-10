@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CATEGORIAS, VARIACOES, linhaPorId } from "@/data/catalogo";
+import { CATEGORIAS, VARIACOES, linhaPorId, paresPorGrade } from "@/data/catalogo";
 import { img } from "@/lib/caminho";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { fecharFolha, useFolha } from "@/lib/folhas";
 import { brl, plural } from "@/lib/formato";
+import { abrirSeTelaLarga } from "@/lib/painel";
+import { gradesCompletas } from "@/lib/pedido";
 import { Stepper } from "./Stepper";
 
 // Folhas por cima da página: escolha de pares avulsos e foto ampliada.
@@ -39,9 +41,12 @@ function Numeracao({ cod }: { cod: string }) {
   const linha = linhaPorId(v.linhaId)!;
   const grade = CATEGORIAS[linha.categoria].grade;
   const e = usePedido();
-  const [tmp, setTmp] = useState<Record<string, number>>(() => ({ ...itemDe(e, cod).s }));
+  const [tmp, setTmp] = useState<Record<string, number>>(() => ({ ...itemDe(e, cod).p }));
   const total = Object.values(tmp).reduce((a, q) => a + q, 0);
   const mudar = (n: string, d: number) => setTmp((s) => ({ ...s, [n]: Math.max(0, (s[n] ?? 0) + d) }));
+  const umaGrade = () => setTmp((s) => Object.fromEntries(grade.map((t) => [t.n, (s[t.n] ?? 0) + t.q])));
+  const grades = gradesCompletas(cod, { p: tmp });
+  const avulsos = total - grades * paresPorGrade(linha.categoria);
 
   return (
     <div className="folha" role="dialog" aria-modal="true" aria-labelledby="num-t">
@@ -50,7 +55,10 @@ function Numeracao({ cod }: { cod: string }) {
         {v.cod} · {v.nome}
       </h2>
       <p className="nota" style={{ marginBottom: 8 }}>
-        Pares avulsos, além das grades fechadas. {brl(linha.preco)} o par.
+        Total de pares por numeração. {brl(linha.preco)} o par.{" "}
+        <button type="button" className="link-num" onClick={umaGrade}>
+          + 1 grade
+        </button>
       </p>
       {grade.map((t, i) => (
         <div className="linha-num" key={t.n}>
@@ -64,7 +72,9 @@ function Numeracao({ cod }: { cod: string }) {
         </div>
       ))}
       <p className="nota" style={{ margin: "12px 0 14px" }}>
-        {total ? `${plural(total, "par avulso", "pares avulsos")} · ${brl(total * linha.preco)}` : "Nenhum par avulso escolhido."}
+        {total
+          ? `${plural(total, "par", "pares")} (${[grades ? plural(grades, "grade", "grades") : "", avulsos ? plural(avulsos, "avulso", "avulsos") : ""].filter(Boolean).join(" + ")}) · ${brl(total * linha.preco)}`
+          : "Nenhum par escolhido."}
       </p>
       <div className="ctas">
         <button
@@ -72,8 +82,10 @@ function Numeracao({ cod }: { cod: string }) {
           className="btn btn-ouro"
           style={{ flex: 1 }}
           onClick={() => {
-            pedido.definirAvulsos(cod, tmp);
+            const vazio = !Object.keys(e.itens).length;
+            pedido.definirPares(cod, tmp);
             fecharFolha();
+            if (vazio && total) abrirSeTelaLarga();
           }}
         >
           Pronto
@@ -83,7 +95,7 @@ function Numeracao({ cod }: { cod: string }) {
         </button>
       </div>
       <p className="nota" style={{ marginTop: 12 }}>
-        A vendedora confirma se a numeração avulsa está disponível.
+        1 grade = {grade.map((t) => `${t.n} ×${t.q}`).join(" · ")}. A vendedora confirma se a numeração avulsa está disponível.
       </p>
     </div>
   );

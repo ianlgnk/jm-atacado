@@ -5,7 +5,8 @@ import { linhaPorId, type Variacao } from "@/data/catalogo";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { abrirFolha } from "@/lib/folhas";
 import { brl, plural } from "@/lib/formato";
-import { avulsos, paresDoItem } from "@/lib/pedido";
+import { abrirSeTelaLarga } from "@/lib/painel";
+import { gradesCompletas, paresDoItem, totalAvulsos } from "@/lib/pedido";
 import { Foto } from "./Foto";
 import { IconeLupa } from "./Icones";
 import { Stepper } from "./Stepper";
@@ -14,7 +15,8 @@ export function CardVariacao({ v, comLinha = false }: { v: Variacao; comLinha?: 
   const e = usePedido();
   const it = itemDe(e, v.cod);
   const linha = linhaPorId(v.linhaId)!;
-  const av = avulsos(it);
+  const grades = gradesCompletas(v.cod, it);
+  const av = totalAvulsos(v.cod, it);
   const ativo = paresDoItem(v.cod, it) > 0;
 
   return (
@@ -22,7 +24,13 @@ export function CardVariacao({ v, comLinha = false }: { v: Variacao; comLinha?: 
       <button type="button" className="foto" onClick={() => abrirFolha({ tipo: "zoom", cod: v.cod })} aria-label={`Ampliar foto ${v.cod} ${v.nome}`}>
         <Foto f={v.foto} sizes="(min-width:1180px) 20vw, (min-width:700px) 28vw, 48vw" alt={`${linha.nome} ${v.nome}`} />
         <span className="codigo">{v.cod}</span>
-        {v.esgotado ? <span className="tarja">Esgotado</span> : <span className="lupa"><IconeLupa /></span>}
+        {v.esgotado ? (
+          <span className="tarja">Esgotado</span>
+        ) : (
+          <span className="lupa">
+            <IconeLupa />
+          </span>
+        )}
       </button>
       <div className="corpo">
         {comLinha && (
@@ -32,10 +40,14 @@ export function CardVariacao({ v, comLinha = false }: { v: Variacao; comLinha?: 
         )}
         <div className="nome">{v.nome}</div>
         <Stepper
-          valor={it.g}
+          valor={grades}
           rotulo={["grade", "grades"]}
           nome={`Grades fechadas de ${v.cod}`}
-          onMais={() => pedido.maisGrade(v.cod)}
+          onMais={() => {
+            const vazio = !Object.keys(e.itens).length;
+            pedido.maisGrade(v.cod);
+            if (vazio) abrirSeTelaLarga();
+          }}
           onMenos={() => pedido.menosGrade(v.cod)}
           desativado={v.esgotado}
           destaque

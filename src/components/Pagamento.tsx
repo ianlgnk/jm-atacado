@@ -144,7 +144,16 @@ export function Pagamento() {
           <p className="aviso-confirma">
             <b>{comPix ? "Seu pedido só é confirmado depois que a vendedora receber o comprovante e a mensagem no WhatsApp." : "Seu pedido só é confirmado depois do pagamento."}</b>
           </p>
-          <a className="btn btn-wa" href={linkWhatsAppVendedora(mensagem(e))} target="_blank" rel="noopener" onClick={() => setEnviado(true)}>
+          <a
+            className="btn btn-wa"
+            href={linkWhatsAppVendedora(mensagem(e))}
+            target="_blank"
+            rel="noopener"
+            onClick={() => {
+              pedido.registrarEnvio();
+              setEnviado(true);
+            }}
+          >
             <IconeWhatsApp /> Enviar pedido no WhatsApp
           </a>
           <details className="previa-msg">
