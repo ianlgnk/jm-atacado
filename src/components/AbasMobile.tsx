@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LOJA, linkWhatsAppVendedora } from "@/config/loja";
+import { LOJA, linkWhatsApp } from "@/config/loja";
 import { usePedido } from "@/lib/carrinho";
 import { brl, plural } from "@/lib/formato";
 import { abrirPainel, usePainel } from "@/lib/painel";
@@ -59,7 +59,7 @@ export function AbasMobile() {
             Pedido
           </button>
         )}
-        <a href={linkWhatsAppVendedora(`Olá! Vim pelo catálogo da ${LOJA.nome} e tenho uma dúvida.`)} target="_blank" rel="noopener">
+        <a href={linkWhatsApp(`Olá! Vim pelo catálogo da ${LOJA.nome} e tenho uma dúvida.`)} target="_blank" rel="noopener">
           <IconeWhatsApp />
           WhatsApp
         </a>

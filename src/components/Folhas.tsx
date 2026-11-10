@@ -98,7 +98,7 @@ function Numeracao({ cod }: { cod: string }) {
         </button>
       </div>
       <p className="nota" style={{ marginTop: 12 }}>
-        1 grade = {grade.map((t) => `${t.n} ×${t.q}`).join(" · ")}. A vendedora confirma se a numeração avulsa está disponível.
+        1 grade = {grade.map((t) => `${t.n} ×${t.q}`).join(" · ")}. A loja confirma se a numeração avulsa está disponível.
       </p>
     </div>
   );

@@ -1,4 +1,4 @@
-import { LOJA, linkWhatsAppVendedora } from "@/config/loja";
+import { LOJA, linkWhatsApp } from "@/config/loja";
 import { img } from "@/lib/caminho";
 import { IconeWhatsApp } from "./Icones";
 
@@ -11,13 +11,13 @@ export function Rodape() {
           <div>
             <b>{LOJA.nome} · Atendimento</b>
             <span>Atacado de calçados · {LOJA.local}</span>
-            <a href={linkWhatsAppVendedora(`Olá! Vim pelo catálogo da ${LOJA.nome} e tenho uma dúvida.`)} target="_blank" rel="noopener">
-              <IconeWhatsApp /> {LOJA.vendedora.exibir}
+            <a href={linkWhatsApp(`Olá! Vim pelo catálogo da ${LOJA.nome} e tenho uma dúvida.`)} target="_blank" rel="noopener">
+              <IconeWhatsApp /> {LOJA.atendimento.exibir}
             </a>
           </div>
         </div>
         <div className="cred">
-          <span>Preços de atacado por par. Estoque, frete e pagamento são confirmados pela vendedora.</span>
+          <span>Preços de atacado por par. Estoque, frete e pagamento são confirmados pela loja.</span>
           <span>
             Site por{" "}
             <a

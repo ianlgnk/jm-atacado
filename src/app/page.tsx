@@ -5,7 +5,6 @@ import { Foto } from "@/components/Foto";
 import { IconeCaminhao, IconeConferir, IconeFabrica, IconeRelogio, IconeSeta } from "@/components/Icones";
 import { VideoCapa } from "@/components/VideoCapa";
 import { LINHAS, PUBLICOS, TOTAL_MODELOS, VARIACOES } from "@/data/catalogo";
-import { LOJA } from "@/config/loja";
 import { brl } from "@/lib/formato";
 
 // Uma cor de cada linha de lançamento, mais a segunda cor da primeira, para fechar 4 cards.
@@ -13,15 +12,15 @@ const DESTAQUES = ["AL-02", "GL-02", "EC-01", "AL-01"];
 
 const PASSOS = [
   { titulo: "Escolha e monte a grade", texto: "Toque em + para pôr uma grade de 12 pares, ou escolha par a par em cada numeração." },
-  { titulo: "Envie no WhatsApp", texto: `O pedido chega pronto para a ${LOJA.vendedora.nome}, com cores, numeração e totais.` },
-  { titulo: "Pague depois de confirmar", texto: "Ela confere o estoque e manda a chave Pix na conversa. Você paga e manda o comprovante ali mesmo." },
+  { titulo: "Envie no WhatsApp", texto: "O pedido chega pronto no WhatsApp da loja, com cores, numeração e totais." },
+  { titulo: "Pague depois de confirmar", texto: "A loja confere o estoque e manda a chave Pix na conversa. Você paga e manda o comprovante ali mesmo." },
 ];
 
 const CONFIANCA = [
-  { Icone: IconeConferir, titulo: "Confere antes de pagar", texto: "A vendedora confirma estoque e frete no WhatsApp. O Pix só vem depois." },
+  { Icone: IconeConferir, titulo: "Confere antes de pagar", texto: "A loja confirma estoque e frete no WhatsApp. O Pix só vem depois." },
   { Icone: IconeCaminhao, titulo: "Envio para todo o Brasil", texto: "Pela transportadora que você indicar no pedido." },
   { Icone: IconeFabrica, titulo: "Fabricação própria", texto: "Parte dos modelos é feita pela JM, em Nova Serrana." },
-  { Icone: IconeRelogio, titulo: "Pedido pronto em minutos", texto: "Grades, numeração e totais chegam organizados para a vendedora." },
+  { Icone: IconeRelogio, titulo: "Pedido pronto em minutos", texto: "Grades, numeração e totais chegam organizados no WhatsApp da loja." },
 ];
 
 export default function Inicio() {
@@ -133,7 +132,7 @@ export default function Inicio() {
           <Foto f="ec-00" sizes="(min-width:900px) 1200px, 100vw" alt="" className="fecho-foto" />
           <div className="fecho-texto">
             <h2>Monte seu pedido.</h2>
-            <p>Escolha as cores, ponha as grades e mande para a {LOJA.vendedora.nome} conferir.</p>
+            <p>Escolha as cores, ponha as grades e mande para a loja conferir.</p>
             <Link className="btn btn-papel" href="/catalogo/">
               Ver catálogo
             </Link>

@@ -1,6 +1,6 @@
 # JM Atacado
 
-Catálogo de atacado da JM Calçados (vendedora: Fabíola). O lojista escolhe os modelos, monta grades fechadas ou pares avulsos e o pedido sai pronto para o WhatsApp da vendedora, com a comissão calculada. A vendedora confere o estoque e manda a chave Pix (ou combina outra forma de pagamento) na conversa.
+Catálogo de atacado da JM Calçados. O lojista escolhe os modelos, monta grades fechadas ou pares avulsos e o pedido sai pronto para o WhatsApp de atendimento da loja, com a comissão calculada. Quem atende confere o estoque e manda a chave Pix (ou combina outra forma de pagamento) na conversa. Os textos do site não citam vendedor pelo nome, porque mais de um vendedor vai usar o catálogo.
 
 O site também sabe gerar QR Code Pix com o valor preenchido, mas hoje está desligado: a chave Pix fica vazia em `src/config/loja.ts`.
 
@@ -17,7 +17,7 @@ npm run dev
 
 | O quê | Arquivo |
 |---|---|
-| WhatsApp da vendedora, chave Pix, comissão na mensagem | `src/config/loja.ts` |
+| WhatsApp de atendimento, chave Pix, comissão na mensagem | `src/config/loja.ts` |
 | Produtos, preços, cores/estampas, esgotado, público de cada linha | `LINHAS` em `src/data/catalogo.ts` |
 | Grades de 12 pares (feminina, masculina, juvenil, infantil) | `GRADES` em `src/data/catalogo.ts` |
 | Comissão por categoria (chinelos 0,50 · tênis 1,00) | `CATEGORIAS` em `src/data/catalogo.ts` |

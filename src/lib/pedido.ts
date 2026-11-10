@@ -1,4 +1,4 @@
-// Contas do pedido e a mensagem que vai para o WhatsApp da vendedora.
+// Contas do pedido e a mensagem que vai para o WhatsApp da loja.
 
 import { LOJA } from "@/config/loja";
 import { CATEGORIAS, GRADES, LINHAS, linhaDaVariacao, ordemNumeracao, type CategoriaId, type Linha, type Tamanho, type Variacao } from "@/data/catalogo";

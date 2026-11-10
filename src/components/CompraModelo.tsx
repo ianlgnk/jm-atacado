@@ -1,7 +1,7 @@
 "use client";
 
 import { linhaPorId, paresDaGrade, VARIACOES } from "@/data/catalogo";
-import { LOJA, linkWhatsAppVendedora } from "@/config/loja";
+import { LOJA, linkWhatsApp } from "@/config/loja";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { brl, plural } from "@/lib/formato";
 import { abrirPainel, abrirSeTelaLarga } from "@/lib/painel";
@@ -29,7 +29,7 @@ export function CompraModelo({ cod }: { cod: string }) {
     return (
       <div className="compra esgotado">
         <p>Esta cor está esgotada no momento.</p>
-        <a className="btn btn-contorno" href={linkWhatsAppVendedora(`Olá! O ${v.cod} ${v.nome} (${linha.nome}) vai voltar? Vim pelo catálogo da ${LOJA.nome}.`)} target="_blank" rel="noopener">
+        <a className="btn btn-contorno" href={linkWhatsApp(`Olá! O ${v.cod} ${v.nome} (${linha.nome}) vai voltar? Vim pelo catálogo da ${LOJA.nome}.`)} target="_blank" rel="noopener">
           Perguntar sobre reposição
         </a>
       </div>

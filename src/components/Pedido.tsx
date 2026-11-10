@@ -20,9 +20,9 @@ const PAGAMENTOS: { id: FormaPagamento; titulo: string; texto: string }[] = [
     titulo: "Pix",
     texto: PIX_NO_SITE
       ? "Você paga pelo QR Code na próxima tela e manda o comprovante junto com o pedido."
-      : "A vendedora confere o estoque e manda a chave Pix no WhatsApp.",
+      : "A loja confere o estoque e manda a chave Pix no WhatsApp.",
   },
-  { id: "combinar", titulo: "Combinar no WhatsApp", texto: "Boleto, cartão ou outra forma: você acerta com a vendedora na conversa." },
+  { id: "combinar", titulo: "Combinar no WhatsApp", texto: "Boleto, cartão ou outra forma: você acerta com a loja na conversa." },
 ];
 
 const OPCOES_FALTA: SeFaltar[] = ["avisar", "trocar", "tirar"];
@@ -135,7 +135,7 @@ export function Pedido() {
               <span>Total</span>
               <span>{brl(t.valor)}</span>
             </div>
-            <p className="nota">Valor de atacado. Frete e disponibilidade confirmados pela vendedora.</p>
+            <p className="nota">Valor de atacado. Frete e disponibilidade confirmados pela loja.</p>
           </div>
 
           <form className="bloco" onSubmit={continuar} noValidate>
@@ -186,7 +186,7 @@ export function Pedido() {
 
             {tentou && falta.length > 0 && (
               <p className="erro" role="alert">
-                Preencha nome, cidade, UF e telefone para a vendedora saber de quem é o pedido.
+                Preencha nome, cidade, UF e telefone para a loja saber de quem é o pedido.
               </p>
             )}
             {tentou && !t.pares && (
@@ -198,7 +198,7 @@ export function Pedido() {
               {PIX_NO_SITE && e.pagamento === "pix" ? "Continuar para o pagamento" : "Revisar e enviar"} <IconeSeta />
             </button>
             <p className="nota aviso-envio">
-              O pedido vai para o WhatsApp de {LOJA.vendedora.nome}, {LOJA.vendedora.exibir}.
+              O pedido vai para o WhatsApp de atendimento da loja, {LOJA.atendimento.exibir}.
             </p>
           </form>
         </aside>

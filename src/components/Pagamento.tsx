@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { LOJA, linkWhatsAppVendedora } from "@/config/loja";
+import { LOJA, linkWhatsApp } from "@/config/loja";
 import { pedido, usePedido } from "@/lib/carrinho";
 import { brl } from "@/lib/formato";
 import { faltandoNoFormulario, mensagem, totais } from "@/lib/pedido";
@@ -71,13 +71,13 @@ export function Pagamento() {
         <p className="numero-pedido">Pedido {e.numero || ""}</p>
         <p className="sub">
           {comPix
-            ? "Confira a mensagem, anexe o comprovante do Pix e toque em enviar. A vendedora responde confirmando estoque e frete."
+            ? "Confira a mensagem, anexe o comprovante do Pix e toque em enviar. A loja responde confirmando estoque e frete."
             : e.pagamento === "pix"
-              ? "Confira a mensagem e toque em enviar. A vendedora confere o estoque e responde com a chave Pix; depois é só pagar e mandar o comprovante na mesma conversa."
-              : "Confira a mensagem e toque em enviar. A vendedora confere o estoque e combina com você o frete e a forma de pagamento."}
+              ? "Confira a mensagem e toque em enviar. A loja confere o estoque e responde com a chave Pix; depois é só pagar e mandar o comprovante na mesma conversa."
+              : "Confira a mensagem e toque em enviar. A loja confere o estoque e combina com você o frete e a forma de pagamento."}
         </p>
         <div className="ctas" style={{ justifyContent: "center" }}>
-          <a className="btn btn-wa" href={linkWhatsAppVendedora(mensagem(e))} target="_blank" rel="noopener" style={{ width: "auto" }}>
+          <a className="btn btn-wa" href={linkWhatsApp(mensagem(e))} target="_blank" rel="noopener" style={{ width: "auto" }}>
             <IconeWhatsApp /> Abrir o WhatsApp de novo
           </a>
           <button
@@ -134,8 +134,8 @@ export function Pagamento() {
           <div className="bloco">
             <span className="lbl">Como funciona</span>
             <ol className="passos-pix">
-              <li>Você envia o pedido no WhatsApp da vendedora.</li>
-              <li>Ela confere o estoque e {e.pagamento === "pix" ? "manda a chave Pix" : "combina a forma de pagamento"} na conversa.</li>
+              <li>Você envia o pedido no WhatsApp da loja.</li>
+              <li>A loja confere o estoque e {e.pagamento === "pix" ? "manda a chave Pix" : "combina a forma de pagamento"} na conversa.</li>
               <li>{e.pagamento === "pix" ? "Você paga e manda o comprovante ali mesmo." : "Você paga do jeito combinado."}</li>
             </ol>
           </div>
@@ -143,11 +143,11 @@ export function Pagamento() {
 
         <div className="bloco">
           <p className="aviso-confirma">
-            <b>{comPix ? "Seu pedido só é confirmado depois que a vendedora receber o comprovante e a mensagem no WhatsApp." : "Seu pedido só é confirmado depois do pagamento."}</b>
+            <b>{comPix ? "Seu pedido só é confirmado depois que a loja receber o comprovante e a mensagem no WhatsApp." : "Seu pedido só é confirmado depois do pagamento."}</b>
           </p>
           <a
             className="btn btn-wa"
-            href={linkWhatsAppVendedora(mensagem(e))}
+            href={linkWhatsApp(mensagem(e))}
             target="_blank"
             rel="noopener"
             onClick={() => {
@@ -158,7 +158,7 @@ export function Pagamento() {
             <IconeWhatsApp /> Enviar pedido no WhatsApp
           </a>
           <details className="previa-msg">
-            <summary>Mensagem que vai para a vendedora</summary>
+            <summary>Mensagem que vai para a loja</summary>
             <div className="msg">{mensagem(e)}</div>
           </details>
         </div>
