@@ -8,6 +8,7 @@ import { fecharFolha, useFolha } from "@/lib/folhas";
 import { brl, plural } from "@/lib/formato";
 import { abrirSeTelaLarga } from "@/lib/painel";
 import { gradesCompletas } from "@/lib/pedido";
+import { IconeFechar, IconeMais } from "./Icones";
 import { Stepper } from "./Stepper";
 
 // Folhas por cima da página: escolha de pares avulsos e foto ampliada.
@@ -50,14 +51,13 @@ function Numeracao({ cod }: { cod: string }) {
 
   return (
     <div className="folha" role="dialog" aria-modal="true" aria-labelledby="num-t">
-      <span className="eyebrow">{linha.nome}</span>
       <h2 id="num-t">
         {v.cod} · {v.nome}
       </h2>
       <p className="nota" style={{ marginBottom: 8 }}>
-        Total de pares por numeração. {brl(linha.preco)} o par.{" "}
+        {linha.nome} · {brl(linha.preco)} o par.{" "}
         <button type="button" className="link-num" onClick={umaGrade}>
-          + 1 grade
+          <IconeMais /> 1 grade
         </button>
       </p>
       {grade.map((t, i) => (
@@ -79,7 +79,7 @@ function Numeracao({ cod }: { cod: string }) {
       <div className="ctas">
         <button
           type="button"
-          className="btn btn-ouro"
+          className="btn btn-tinta"
           style={{ flex: 1 }}
           onClick={() => {
             const vazio = !Object.keys(e.itens).length;
@@ -90,7 +90,7 @@ function Numeracao({ cod }: { cod: string }) {
         >
           Pronto
         </button>
-        <button type="button" className="btn btn-linha" onClick={fecharFolha}>
+        <button type="button" className="btn btn-contorno" onClick={fecharFolha}>
           Cancelar
         </button>
       </div>
@@ -107,7 +107,7 @@ function Zoom({ cod }: { cod: string }) {
   return (
     <div className="zoom" role="dialog" aria-modal="true" aria-label={`${v.cod} ${v.nome}`}>
       <button type="button" className="fechar" onClick={fecharFolha} aria-label="Fechar" data-foco="">
-        ×
+        <IconeFechar />
       </button>
       <img src={img(`${v.foto}-1200.jpg`)} alt={`${linha.nome} ${v.nome}`} />
       <p>

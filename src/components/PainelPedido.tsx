@@ -7,6 +7,8 @@ import { usePedido } from "@/lib/carrinho";
 import { brl, plural } from "@/lib/formato";
 import { fecharPainel, usePainel, useTelaLarga } from "@/lib/painel";
 import { grupos, totais } from "@/lib/pedido";
+import { IconeFechar, IconeSeta } from "./Icones";
+import { DesfazerRemocao } from "./DesfazerRemocao";
 import { Matriz } from "./Matriz";
 import { RepetirUltimo } from "./RepetirUltimo";
 
@@ -49,17 +51,18 @@ export function PainelPedido() {
       <aside className="painel" role={larga ? "complementary" : "dialog"} aria-modal={larga ? undefined : true} aria-labelledby="painel-t">
         <div className="painel-cab">
           <div>
-            <span className="eyebrow">Seu pedido{e.numero && t.pares ? ` · ${e.numero}` : ""}</span>
             <h2 id="painel-t" ref={titulo} tabIndex={-1}>
-              {t.pares ? `${t.pares} pares · ${brl(t.valor)}` : "Pedido vazio"}
+              Seu pedido
             </h2>
+            <p>{t.pares ? `${plural(t.pares, "par", "pares")} · ${brl(t.valor)}${e.numero ? ` · ${e.numero}` : ""}` : "Nada escolhido ainda"}</p>
           </div>
           <button type="button" className="fechar-painel" onClick={fecharPainel} aria-label="Fechar o pedido">
-            ×
+            <IconeFechar />
           </button>
         </div>
 
         <div className="painel-corpo">
+          <DesfazerRemocao />
           {gs.length ? (
             <>
               <p className="nota">Digite os pares de cada numeração ou use “+ grade” para somar 2-4-4-2.</p>
@@ -84,8 +87,8 @@ export function PainelPedido() {
               </span>
               <b>{brl(t.valor)}</b>
             </div>
-            <Link className="btn btn-ouro largo" href="/pedido/" onClick={sairNoCelular}>
-              Finalizar pedido →
+            <Link className="btn btn-tinta largo" href="/pedido/" onClick={sairNoCelular}>
+              Finalizar pedido <IconeSeta />
             </Link>
           </div>
         )}

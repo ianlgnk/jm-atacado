@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LOJA } from "@/config/loja";
 import { pedido, usePedido, type Cliente, type FormaPagamento, type SeFaltar } from "@/lib/carrinho";
 import { brl, mascaraTelefone } from "@/lib/formato";
 import { TEXTO_SE_FALTAR, faltandoNoFormulario, grupos, porNumeracao, totais } from "@/lib/pedido";
+import { IconeSeta, IconeVoltar } from "./Icones";
+import { DesfazerRemocao } from "./DesfazerRemocao";
 import { Matriz } from "./Matriz";
 import { RepetirUltimo } from "./RepetirUltimo";
 
@@ -35,15 +37,20 @@ export function Pedido() {
   const invalido = (k: keyof Cliente) => tentou && falta.includes(k);
   const categorias = [...new Set(grupos(e.itens).map((g) => g.linha.categoria))];
 
+  // Vindo da folha do pedido (que trava a rolagem), a página abria no meio.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (!gs.length) {
     return (
       <div className="vazio">
-        <span className="eyebrow">Seu pedido</span>
         <h1 className="titulo">Seu pedido está vazio</h1>
         <p className="sub">Escolha os modelos e as grades no catálogo. Eles aparecem aqui, prontos para enviar.</p>
+        <DesfazerRemocao />
         <div className="ctas" style={{ justifyContent: "center" }}>
-          <Link className="btn btn-ouro" href="/catalogo/">
-            Ver catálogo →
+          <Link className="btn btn-tinta" href="/catalogo/">
+            Ver catálogo
           </Link>
           <RepetirUltimo />
         </div>
@@ -84,12 +91,13 @@ export function Pedido() {
   return (
     <>
       <Link className="voltar" href="/catalogo/">
-        ← Continuar escolhendo
+        <IconeVoltar /> Continuar escolhendo
       </Link>
       <h1 className="titulo">Seu pedido</h1>
       <p className="sub">Confira os pares por cor e numeração, preencha seus dados e escolha como pagar.</p>
       <div className="pedido">
         <div className="pedido-itens">
+          <DesfazerRemocao />
           {gs.map((g) => (
             <Matriz key={g.linha.id} linha={g.linha} vars={g.vars} />
           ))}
@@ -189,8 +197,8 @@ export function Pedido() {
                 O pedido está sem pares. Preencha a tabela ou use “+ grade”.
               </p>
             )}
-            <button type="submit" className="btn btn-ouro largo">
-              {PIX_NO_SITE && e.pagamento === "pix" ? "Continuar para o pagamento →" : "Revisar e enviar →"}
+            <button type="submit" className="btn btn-tinta largo">
+              {PIX_NO_SITE && e.pagamento === "pix" ? "Continuar para o pagamento" : "Revisar e enviar"} <IconeSeta />
             </button>
             <p className="nota aviso-envio">
               O pedido vai para o WhatsApp de {LOJA.vendedora.nome}, {LOJA.vendedora.exibir}.

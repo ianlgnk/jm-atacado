@@ -6,6 +6,7 @@ import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { abrirFolha } from "@/lib/folhas";
 import { brl } from "@/lib/formato";
 import { paresDoItem, porNumeracao } from "@/lib/pedido";
+import { IconeFechar, IconeMais } from "./Icones";
 
 // Tabela de uma linha: cores nas linhas, numerações nas colunas, pares em cada célula.
 export function Matriz({ linha, vars, aoSair }: { linha: Linha; vars: Variacao[]; aoSair?: () => void }) {
@@ -54,12 +55,9 @@ export function Matriz({ linha, vars, aoSair }: { linha: Linha; vars: Variacao[]
                         <span className="cor-acoes">
                           {!v.esgotado && (
                             <button type="button" onClick={() => pedido.maisGrade(v.cod)} aria-label={`Pôr uma grade de ${v.cod}`}>
-                              + grade
+                              <IconeMais /> grade
                             </button>
                           )}
-                          <button type="button" className="remover-x" onClick={() => pedido.remover(v.cod)} aria-label={`Remover ${v.cod} do pedido`} title="Remover do pedido">
-                            ×
-                          </button>
                         </span>
                       </div>
                     </div>
@@ -67,11 +65,10 @@ export function Matriz({ linha, vars, aoSair }: { linha: Linha; vars: Variacao[]
                   {grade.map((t) => (
                     <td key={t.n}>
                       <input
-                        className="celula"
+                        className={`celula${it.p[t.n] ? " cheia" : ""}`}
                         inputMode="numeric"
                         pattern="[0-9]*"
                         autoComplete="off"
-                        placeholder="0"
                         disabled={v.esgotado}
                         aria-label={`${v.cod} ${v.nome}, pares ${t.n}`}
                         value={it.p[t.n] ? String(it.p[t.n]) : ""}
@@ -80,7 +77,12 @@ export function Matriz({ linha, vars, aoSair }: { linha: Linha; vars: Variacao[]
                       />
                     </td>
                   ))}
-                  <td className="col-tot">{p}</td>
+                  <td className="col-tot">
+                    <span className="tot-num">{p}</span>
+                    <button type="button" className="remover-x" onClick={() => pedido.remover(v.cod)} aria-label={`Remover ${v.cod} do pedido`} title="Remover do pedido">
+                      <IconeFechar />
+                    </button>
+                  </td>
                 </tr>
               );
             })}
@@ -100,7 +102,7 @@ export function Matriz({ linha, vars, aoSair }: { linha: Linha; vars: Variacao[]
       </div>
       <div className="matriz-pe">
         <Link className="mais-cores" href={`/linha/${linha.id}/`} onClick={aoSair}>
-          + outras cores
+          <IconeMais /> outras cores
         </Link>
         <span>
           {paresLinha} pares · <b>{brl(paresLinha * linha.preco)}</b>

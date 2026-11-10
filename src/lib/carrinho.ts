@@ -32,6 +32,7 @@ export type Estado = {
   seFaltar: SeFaltar;
   cliente: Cliente;
   ultimo: UltimoPedido | null;
+  removido: { cod: string; item: Item } | null; // para "Desfazer" depois de remover uma cor
 };
 
 const CHAVE = "jm-atacado-pedido-v2";
@@ -44,6 +45,7 @@ const VAZIO: Estado = {
   seFaltar: "avisar",
   cliente: { nome: "", loja: "", cidade: "", uf: "", telefone: "", transportadora: "", obs: "" },
   ultimo: null,
+  removido: null,
 };
 
 const gradeDe = (cod: string) => CATEGORIAS[linhaDaVariacao(cod)!.categoria].grade;
@@ -95,6 +97,7 @@ function carregar() {
         seFaltar: ["avisar", "trocar", "tirar"].includes(s.seFaltar) ? s.seFaltar : "avisar",
         cliente: { ...VAZIO.cliente, ...(s.cliente || {}) },
         ultimo: s.ultimo?.itens ? { ...s.ultimo, itens: limparItens(s.ultimo.itens) } : null,
+        removido: null,
       };
     }
   } catch {
@@ -144,7 +147,7 @@ function gravarItens(novos: Record<string, Item>, manterVazio = false) {
       if (Object.keys(p).length || manterVazio) itens[cod] = { p };
       else delete itens[cod];
     }
-    return { ...e, itens, numero: Object.keys(itens).length ? e.numero || novoNumero() : e.numero };
+    return { ...e, itens, removido: null, numero: Object.keys(itens).length ? e.numero || novoNumero() : e.numero };
   });
 }
 
@@ -162,9 +165,10 @@ export const pedido = {
     const it = itemDe(ler(), cod);
     if (gradesCompletas(cod, it) > 0) gravarItens({ [cod]: somarGrade(cod, it, -1) });
   },
-  definirPar(cod: string, numeracao: string, pares: number) {
+  // manterVazio = true na tabela do pedido (a linha não some enquanto o lojista digita).
+  definirPar(cod: string, numeracao: string, pares: number, manterVazio = true) {
     const it = itemDe(ler(), cod);
-    gravarItens({ [cod]: { p: { ...it.p, [numeracao]: Math.max(0, Math.floor(pares) || 0) } } }, true);
+    gravarItens({ [cod]: { p: { ...it.p, [numeracao]: Math.max(0, Math.floor(pares) || 0) } } }, manterVazio);
   },
   definirPares(cod: string, p: Record<string, number>) {
     gravarItens({ [cod]: { p } });
@@ -179,9 +183,16 @@ export const pedido = {
   remover(cod: string) {
     mudar((e) => {
       const itens = { ...e.itens };
+      const item = itens[cod];
       delete itens[cod];
-      return { ...e, itens };
+      return { ...e, itens, removido: item ? { cod, item } : null };
     });
+  },
+  desfazerRemocao() {
+    mudar((e) => (e.removido ? { ...e, itens: { ...e.itens, [e.removido.cod]: e.removido.item }, removido: null } : e));
+  },
+  esquecerRemocao() {
+    mudar((e) => ({ ...e, removido: null }));
   },
   cliente(campo: keyof Cliente, valor: string) {
     mudar((e) => ({ ...e, cliente: { ...e.cliente, [campo]: valor } }));
@@ -211,6 +222,6 @@ export const pedido = {
   },
   // Limpa os itens e o número, mas guarda os dados do lojista e o último pedido.
   novo() {
-    mudar((e) => ({ ...e, itens: {}, numero: "" }));
+    mudar((e) => ({ ...e, itens: {}, numero: "", removido: null }));
   },
 };

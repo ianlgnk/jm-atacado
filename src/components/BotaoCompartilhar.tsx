@@ -14,7 +14,7 @@ export function BotaoCompartilhar({ linhaId }: { linhaId: string }) {
   }
 
   return (
-    <button type="button" className="btn btn-linha" onClick={compartilhar}>
+    <button type="button" className="btn btn-contorno" onClick={compartilhar}>
       <IconeWhatsApp /> Compartilhar
     </button>
   );

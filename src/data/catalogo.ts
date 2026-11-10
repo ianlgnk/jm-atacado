@@ -41,6 +41,7 @@ export type Variacao = {
 export type Linha = {
   id: string;
   nome: string;
+  curto: string; // nome curto da linha, para filtros e cards
   marca: string;
   categoria: CategoriaId;
   preco: number;
@@ -66,31 +67,31 @@ function linha(def: Omit<Linha, "variacoes"> & { vars: Entrada[] }): Linha {
 
 export const LINHAS: Linha[] = [
   linha({
-    id: "al", nome: "Havaianas Âmbar Lux", marca: "Havaianas", categoria: "chinelos", preco: 10.5,
+    id: "al", nome: "Havaianas Âmbar Lux", curto: "Âmbar Lux", marca: "Havaianas", categoria: "chinelos", preco: 10.5,
     lancamento: true, rotulo: "cores", capa: "al-02",
     descricao: ["Nova sola com desenhos em alto-relevo", "Aplicação em ABS com corrente cromada e pedrarias", "Solado em micro expandido, leve e confortável", "Fabricação própria"],
     vars: [["Vermelha"], ["Preta", "dourado"], ["Rosa"], ["Marinho", "azul"]],
   }),
   linha({
-    id: "gl", nome: "Havaianas Glitter", marca: "Havaianas", categoria: "chinelos", preco: 8.5,
+    id: "gl", nome: "Havaianas Glitter", curto: "Glitter", marca: "Havaianas", categoria: "chinelos", preco: 8.5,
     lancamento: true, rotulo: "cores", capa: "gl-02",
     descricao: ["Correia toda com glitter", "Sola em micro expandido", "Aplicação em ABS cromado"],
     vars: [["Preta"], ["Lilás", "roxo"], ["Areia", "dourada bege nude"]],
   }),
   linha({
-    id: "ec", nome: "Havaianas Estrela Cravejada", marca: "Havaianas", categoria: "chinelos", preco: 7.9,
+    id: "ec", nome: "Havaianas Estrela Cravejada", curto: "Estrela Cravejada", marca: "Havaianas", categoria: "chinelos", preco: 7.9,
     lancamento: true, rotulo: "cores", capa: "ec-00",
     descricao: ["Pingente estrela em resina", "Sola em micro expandido", "Aplicação em ABS cromado"],
     vars: [["Lilás", "roxo"], ["Areia", "bege nude"], ["Vinho", "bordô"], ["Vermelha"], ["Café", "marrom"], ["Preta"], ["Rosa"], ["Marinho", "azul"]],
   }),
   linha({
-    id: "fc", nome: "Havaianas Farm Cereja", marca: "Havaianas", categoria: "chinelos", preco: 10,
+    id: "fc", nome: "Havaianas Farm Cereja", curto: "Farm Cereja", marca: "Havaianas", categoria: "chinelos", preco: 10,
     lancamento: false, rotulo: "estampas", capa: "fc-01",
     descricao: ["Pingente em ABS com resina", "Estampa em transfer digital", "Solado em micro expandido"],
     vars: [["Cerejas", "branca vermelha"], ["Cerejas e oncinha", "azul laranja onça"], ["Cerejas e laços", "branca corações"], ["Cerejas creme", "bege"]],
   }),
   linha({
-    id: "fp", nome: "Havaianas Farm Pingente", marca: "Havaianas", categoria: "chinelos", preco: 9.5,
+    id: "fp", nome: "Havaianas Farm Pingente", curto: "Farm Pingente", marca: "Havaianas", categoria: "chinelos", preco: 9.5,
     lancamento: false, rotulo: "estampas", capa: "fp-05",
     descricao: ["Estampa em transfer digital", "Sola em micro expandido", "Pingente em ABS"],
     vars: [

@@ -8,7 +8,7 @@ import { pedido, usePedido } from "@/lib/carrinho";
 import { brl } from "@/lib/formato";
 import { faltandoNoFormulario, mensagem, totais } from "@/lib/pedido";
 import { pixCopiaECola } from "@/lib/pix";
-import { IconeCopiar, IconeWhatsApp } from "./Icones";
+import { IconeCopiar, IconeVoltar, IconeWhatsApp } from "./Icones";
 
 export function Pagamento() {
   const e = usePedido();
@@ -30,11 +30,10 @@ export function Pagamento() {
   if (!t.modelos && !enviado) {
     return (
       <div className="vazio">
-        <span className="eyebrow">Pagamento</span>
         <h1 className="titulo">Nenhum pedido aberto</h1>
         <p className="sub">Monte o pedido no catálogo primeiro.</p>
-        <Link className="btn btn-ouro" href="/catalogo/">
-          Ver catálogo →
+        <Link className="btn btn-tinta" href="/catalogo/">
+          Ver catálogo
         </Link>
       </div>
     );
@@ -43,11 +42,10 @@ export function Pagamento() {
   if (faltandoNoFormulario(e).length && !enviado) {
     return (
       <div className="vazio">
-        <span className="eyebrow">Pagamento</span>
         <h1 className="titulo">Faltam seus dados</h1>
         <p className="sub">Preencha nome, cidade e telefone no pedido antes de pagar.</p>
-        <Link className="btn btn-ouro" href="/pedido/">
-          Voltar ao pedido →
+        <Link className="btn btn-tinta" href="/pedido/">
+          Voltar ao pedido
         </Link>
       </div>
     );
@@ -66,8 +64,8 @@ export function Pagamento() {
   if (enviado) {
     return (
       <div className="vazio">
-        <span className="eyebrow">Pedido {e.numero || ""}</span>
         <h1 className="titulo">Seu WhatsApp abriu com o pedido</h1>
+        <p className="numero-pedido">Pedido {e.numero || ""}</p>
         <p className="sub">
           {comPix
             ? "Confira a mensagem, anexe o comprovante do Pix e toque em enviar. A vendedora responde confirmando estoque e frete."
@@ -81,7 +79,7 @@ export function Pagamento() {
           </a>
           <button
             type="button"
-            className="btn btn-linha"
+            className="btn btn-contorno"
             onClick={() => {
               pedido.novo();
               setEnviado(false);
@@ -97,10 +95,10 @@ export function Pagamento() {
   return (
     <>
       <Link className="voltar" href="/pedido/">
-        ← Voltar ao pedido
+        <IconeVoltar /> Voltar ao pedido
       </Link>
-      <span className="eyebrow">Pedido {e.numero}</span>
       <h1 className="titulo">{comPix ? "Pagamento por Pix" : "Enviar pedido"}</h1>
+      <p className="numero-pedido">Pedido {e.numero}</p>
       <div className="pagamento">
         <div className="bloco destaque-total">
           <span className="lbl">Total do pedido</span>
@@ -121,7 +119,7 @@ export function Pagamento() {
             <div className="qr" aria-label="QR Code do Pix" role="img" dangerouslySetInnerHTML={{ __html: svg }} />
             <div className="copia-cola">
               <code>{codigoPix}</code>
-              <button type="button" className="btn btn-linha" onClick={copiar}>
+              <button type="button" className="btn btn-contorno" onClick={copiar}>
                 <IconeCopiar /> {copiado ? "Copiado!" : "Copiar código Pix"}
               </button>
             </div>

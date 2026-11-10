@@ -1,127 +1,128 @@
 import Link from "next/link";
-import { BlocoTenis } from "@/components/BlocoTenis";
-import { CardLinha } from "@/components/CardLinha";
+import { CardModelo } from "@/components/CardModelo";
 import { Foto } from "@/components/Foto";
-import { LINHAS, TOTAL_MODELOS, paresPorGrade } from "@/data/catalogo";
+import { IconeCaminhao, IconeConferir, IconeFabrica, IconeRelogio, IconeSeta } from "@/components/Icones";
+import { VideoCapa } from "@/components/VideoCapa";
+import { LINHAS, TOTAL_MODELOS, VARIACOES } from "@/data/catalogo";
+import { LOJA } from "@/config/loja";
+import { brl } from "@/lib/formato";
+
+// Uma cor de cada linha de lançamento, mais a segunda cor da primeira, para fechar 4 cards.
+const DESTAQUES = ["AL-02", "GL-02", "EC-01", "AL-01"];
+
+const PASSOS = [
+  { titulo: "Escolha e monte a grade", texto: "Toque em + para pôr uma grade de 12 pares, ou escolha par a par em cada numeração." },
+  { titulo: "Envie no WhatsApp", texto: `O pedido chega pronto para a ${LOJA.vendedora.nome}, com cores, numeração e totais.` },
+  { titulo: "Pague depois de confirmar", texto: "Ela confere o estoque e manda a chave Pix na conversa. Você paga e manda o comprovante ali mesmo." },
+];
+
+const CONFIANCA = [
+  { Icone: IconeConferir, titulo: "Confere antes de pagar", texto: "A vendedora confirma estoque e frete no WhatsApp. O Pix só vem depois." },
+  { Icone: IconeCaminhao, titulo: "Envio para todo o Brasil", texto: "Pela transportadora que você indicar no pedido." },
+  { Icone: IconeFabrica, titulo: "Fabricação própria", texto: "Parte dos modelos é feita pela JM, em Nova Serrana." },
+  { Icone: IconeRelogio, titulo: "Pedido pronto em minutos", texto: "Grades, numeração e totais chegam organizados para a vendedora." },
+];
 
 export default function Inicio() {
-  const lancamentos = LINHAS.filter((l) => l.lancamento);
-  const grade = paresPorGrade("chinelos");
-
   return (
     <>
-      <section className="hero">
-        <div className="wrap">
-          <div>
-            <span className="eyebrow">
-              Atacado<span className="longo">&nbsp;de calçados</span> · Nova Serrana
-            </span>
+      <section className="wrap capa">
+        <div className="capa-cartao">
+          <VideoCapa className="capa-video" />
+          <div className="capa-texto">
             <h1>
-              Seu pedido de atacado <em>pronto em minutos</em>
+              <span className="capa-linha">
+                <span>Chinelos</span>
+              </span>
+              <span className="capa-linha">
+                <span>no atacado.</span>
+              </span>
             </h1>
-            <p className="lead">Escolha os modelos, monte as grades e mande o pedido direto para o WhatsApp da vendedora. Sem esperar foto por foto.</p>
-            <div className="ctas">
-              <Link className="btn btn-ouro" href="/catalogo/">
-                Montar meu pedido →
+            <p className="capa-sub">Grade de 12 pares, direto de Nova Serrana.</p>
+            <div className="ctas capa-ctas">
+              <Link className="btn btn-tinta" href="/catalogo/">
+                Ver catálogo <IconeSeta />
               </Link>
-              <Link className="btn btn-linha" href="/#como">
+              <Link className="link-capa" href="/#como">
                 Como funciona
               </Link>
             </div>
-            <div className="numeros">
-              <div>
-                <b>{LINHAS.length}</b>
-                <span>linhas de chinelos</span>
-              </div>
-              <div>
-                <b>{TOTAL_MODELOS}</b>
-                <span>cores e estampas</span>
-              </div>
-              <div>
-                <b>{grade}</b>
-                <span>pares por grade</span>
-              </div>
-              <div>
-                <b>33–40</b>
-                <span>numeração</span>
-              </div>
-            </div>
-          </div>
-          <div className="colagem" aria-hidden="true">
-            <figure>
-              <Foto f="fp-08" sizes="(min-width:920px) 280px, 52vw" prioridade />
-            </figure>
-            <figure>
-              <Foto f="al-02" sizes="(min-width:920px) 280px, 52vw" prioridade />
-            </figure>
-            <figure>
-              <Foto f="fp-13" sizes="(min-width:920px) 280px, 52vw" prioridade />
-            </figure>
-            <span className="pilula">Grade de {grade} pares · 33/34 ao 39/40</span>
           </div>
         </div>
       </section>
 
-      <section className="secao">
-        <div className="wrap">
-          <div className="cab-secao">
-            <div>
-              <span className="eyebrow">Novidades</span>
-              <h2>Lançamentos</h2>
-            </div>
-            <Link className="ver-tudo" href="/catalogo/?f=lancamentos">
-              Ver todos →
+      <section className="wrap secao secao-primeira">
+        <div className="secao-cab">
+          <h2>Lançamentos</h2>
+          <Link className="ver-tudo" href="/catalogo/?f=lancamentos">
+            Ver todos <IconeSeta />
+          </Link>
+        </div>
+        <div className="vitrine">
+          {DESTAQUES.map((c) => (
+            <CardModelo key={c} v={VARIACOES[c]} />
+          ))}
+        </div>
+      </section>
+
+      <section className="wrap secao" id="como">
+        <h2>Como funciona</h2>
+        <ol className="passos">
+          {PASSOS.map((p) => (
+            <li key={p.titulo}>
+              <b>{p.titulo}</b>
+              <span>{p.texto}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="wrap secao">
+        <div className="secao-cab">
+          <h2>Linhas</h2>
+          <span className="nota">
+            {LINHAS.length} linhas · {TOTAL_MODELOS} modelos
+          </span>
+        </div>
+        <div className="linhas">
+          {LINHAS.map((l) => (
+            <Link key={l.id} href={`/linha/${l.id}/`} className="linha-atalho">
+              <span className="linha-foto">
+                <Foto f={l.capa} sizes="160px" alt="" />
+              </span>
+              <b>{l.curto}</b>
+              <small>
+                {brl(l.preco)}/par · {l.variacoes.length} {l.rotulo}
+              </small>
             </Link>
-          </div>
-          <div className="trilho">
-            {lancamentos.map((l) => (
-              <CardLinha key={l.id} linha={l} sizes="(min-width:760px) 33vw, 70vw" />
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 
-      <section className="secao" id="como">
-        <div className="wrap">
-          <span className="eyebrow">Como comprar</span>
-          <h2>Três passos</h2>
-          <p className="sub">Do catálogo ao WhatsApp, sem trocar foto por foto.</p>
-          <div className="passos">
-            <div className="passo">
-              <div className="n">01</div>
-              <h3>Escolha os modelos</h3>
-              <p>Veja todas as cores e estampas de cada linha, com código e preço por par.</p>
-            </div>
-            <div className="passo">
-              <div className="n">02</div>
-              <h3>Monte as grades</h3>
-              <p>Toque em + para cada grade de {grade} pares, ou escolha pares avulsos por numeração.</p>
-            </div>
-            <div className="passo">
-              <div className="n">03</div>
-              <h3>Envie no WhatsApp</h3>
-              <p>O pedido chega pronto para a vendedora, que confere o estoque e manda o Pix ou combina outra forma de pagamento.</p>
-            </div>
-          </div>
-        </div>
+      <section className="wrap secao">
+        <h2>Compre com confiança</h2>
+        <ul className="confianca">
+          {CONFIANCA.map(({ Icone, titulo, texto }) => (
+            <li key={titulo}>
+              <Icone />
+              <span>
+                <b>{titulo}</b>
+                {texto}
+              </span>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <section className="secao">
-        <div className="wrap">
-          <span className="eyebrow">Categorias</span>
-          <h2>Tudo num lugar só</h2>
-          <p className="sub">Chinelos e tênis de várias fábricas de Nova Serrana.</p>
-          <div className="cats">
-            <Link className="cat" href="/catalogo/?f=chinelos">
-              <Foto f="ec-00" sizes="(min-width:760px) 55vw, 100vw" alt="Chinelos" />
-              <div>
-                <b>Chinelos</b>
-                <span>
-                  {LINHAS.length} linhas · {TOTAL_MODELOS} modelos
-                </span>
-              </div>
+      <section className="wrap secao">
+        <div className="fecho">
+          <Foto f="ec-00" sizes="(min-width:900px) 1200px, 100vw" alt="" className="fecho-foto" />
+          <div className="fecho-texto">
+            <h2>Monte seu pedido.</h2>
+            <p>Escolha as cores, ponha as grades e mande para a {LOJA.vendedora.nome} conferir.</p>
+            <Link className="btn btn-papel" href="/catalogo/">
+              Ver catálogo
             </Link>
-            <BlocoTenis />
           </div>
         </div>
       </section>

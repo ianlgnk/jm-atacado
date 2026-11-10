@@ -3,3 +3,5 @@
 export const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const img = (arquivo: string) => `${BASE}/img/${arquivo}`;
+
+export const video = (arquivo: string) => `${BASE}/video/${arquivo}`;

@@ -21,6 +21,7 @@ npm run dev
 | Produtos, preços, cores/estampas, esgotado | `src/data/catalogo.ts` |
 | Grade e comissão por categoria (chinelos 0,50 · tênis 1,00) | `CATEGORIAS` em `src/data/catalogo.ts` |
 | Fotos (`<linha>-<nn>-480.jpg` e `-1200.jpg`) | `public/img/` |
+| Vídeo da capa (Pexels, licença livre, pexels.com/video/8456413) | `public/video/` |
 | Texto da mensagem do pedido | `mensagem()` em `src/lib/pedido.ts` |
 | Pix copia e cola (BR Code estático) | `src/lib/pix.ts` |
 
