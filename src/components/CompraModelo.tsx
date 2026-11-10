@@ -6,24 +6,24 @@ import { useAtendimento } from "@/lib/vendedor";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { brl, plural } from "@/lib/formato";
 import { abrirPainel, abrirSeTelaLarga } from "@/lib/painel";
-import { gradesCompletas, paresDoItem, totalAvulsos } from "@/lib/pedido";
+import { paresDoItem } from "@/lib/pedido";
+import { GradeViva } from "./GradeViva";
 import { IconeMais, IconeMenos, IconeSacola } from "./Icones";
 
-// Parte de compra da tela do modelo: pares por numeração, + 1 grade e o total deste modelo.
+// Parte de compra da tela do modelo. Só grade fechada: a numeração é a composição da grade,
+// e o lojista escolhe quantas grades desta cor quer.
 export function CompraModelo({ cod }: { cod: string }) {
   const v = VARIACOES[cod];
   const linha = linhaPorId(v.linhaId)!;
-  const grade = linha.grade;
   const e = usePedido();
   const { whatsapp } = useAtendimento();
   const it = itemDe(e, cod);
+  const porGrade = paresDaGrade(linha);
   const pares = paresDoItem(cod, it);
-  const grades = gradesCompletas(cod, it);
-  const avulsos = totalAvulsos(cod, it);
 
-  const comAbertura = (fn: () => void) => () => {
+  const mais = () => {
     const vazio = !Object.keys(e.itens).length;
-    fn();
+    pedido.maisGrade(cod);
     if (vazio) abrirSeTelaLarga();
   };
 
@@ -41,42 +41,36 @@ export function CompraModelo({ cod }: { cod: string }) {
   return (
     <div className="compra">
       <div className="compra-cab">
-        <h2>Numeração</h2>
-        <span>1 grade = {grade.map((t) => t.q).join("·")} ({paresDaGrade(linha)} pares)</span>
+        <h2>Grade fechada</h2>
+        <span>
+          {porGrade} pares · {brl(porGrade * linha.preco)}
+        </span>
       </div>
-      <div className="compra-tamanhos">
-        {grade.map((t) => {
-          const q = it.p[t.n] ?? 0;
-          return (
-            <div key={t.n} className={`tamanho${q ? " cheio" : ""}`}>
-              <span className="tamanho-n">{t.n}</span>
-              <button type="button" onClick={() => pedido.definirPar(cod, t.n, q - 1, false)} disabled={!q} aria-label={`Menos um par ${t.n}`}>
-                <IconeMenos />
-              </button>
-              <output aria-live="polite" aria-label={`${q} pares ${t.n}`}>
-                {q}
-              </output>
-              <button type="button" onClick={comAbertura(() => pedido.definirPar(cod, t.n, q + 1, false))} aria-label={`Mais um par ${t.n}`}>
-                <IconeMais />
-              </button>
-            </div>
-          );
-        })}
-      </div>
-      <button type="button" className="btn btn-tinta largo" onClick={comAbertura(() => pedido.maisGrade(cod))}>
-        <IconeMais /> Pôr 1 grade · {brl(paresDaGrade(linha) * linha.preco)}
-      </button>
-      {pares > 0 && (
-        <div className="compra-resumo">
-          <span>
-            <b>{plural(pares, "par", "pares")}</b>
-            {grades ? ` · ${plural(grades, "grade", "grades")}` : ""}
-            {avulsos ? ` + ${plural(avulsos, "avulso", "avulsos")}` : ""} · {brl(pares * linha.preco)}
+      <GradeViva v={v} />
+      {it.g === 0 ? (
+        <button type="button" className="btn btn-tinta largo" onClick={mais}>
+          <IconeMais /> Pôr 1 grade · {brl(porGrade * linha.preco)}
+        </button>
+      ) : (
+        <div className="compra-grades">
+          <span className="passo-grade passo-grande" role="group" aria-label={`Grades de ${v.cod}`}>
+            <button type="button" onClick={() => pedido.menosGrade(cod)} aria-label={it.g > 1 ? "Tirar uma grade" : "Tirar do pedido"}>
+              <IconeMenos />
+            </button>
+            <output aria-live="polite">{plural(it.g, "grade", "grades")}</output>
+            <button type="button" onClick={mais} aria-label="Pôr mais uma grade">
+              <IconeMais />
+            </button>
           </span>
-          <button type="button" className="link-acao" onClick={abrirPainel}>
-            <IconeSacola /> Ver pedido
-          </button>
+          <span className="compra-total">
+            <b>{plural(pares, "par", "pares")}</b> · {brl(pares * linha.preco)}
+          </span>
         </div>
+      )}
+      {it.g > 0 && (
+        <button type="button" className="link-acao" onClick={abrirPainel}>
+          <IconeSacola /> Ver pedido
+        </button>
       )}
     </div>
   );

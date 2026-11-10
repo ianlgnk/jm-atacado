@@ -95,7 +95,7 @@ export function Pedido() {
         <IconeVoltar /> Continuar escolhendo
       </Link>
       <h1 className="titulo">Seu pedido</h1>
-      <p className="sub">Confira os pares por cor e numeração, preencha seus dados e escolha como pagar.</p>
+      <p className="sub">Confira as grades de cada cor, preencha seus dados e escolha como pagar.</p>
       <div className="pedido">
         <div className="pedido-itens">
           <DesfazerRemocao />
@@ -112,15 +112,9 @@ export function Pedido() {
               <b>{t.modelos}</b>
             </div>
             <div className="l">
-              <span>Grades fechadas</span>
+              <span>Grades</span>
               <b>{t.grades}</b>
             </div>
-            {t.avulsos > 0 && (
-              <div className="l">
-                <span>Pares avulsos</span>
-                <b>{t.avulsos}</b>
-              </div>
-            )}
             <div className="l">
               <span>Total de pares</span>
               <b>{t.pares}</b>

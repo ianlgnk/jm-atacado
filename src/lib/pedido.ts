@@ -4,46 +4,32 @@ import { LOJA } from "@/config/loja";
 import { GRADES, LINHAS, linhaDaVariacao, ordemNumeracao, type Linha, type Tamanho, type Variacao } from "@/data/catalogo";
 import type { Estado, Item, SeFaltar } from "./carrinho";
 import { brl, plural } from "./formato";
+import { linkSeparar } from "./separar";
 
 const gradeDe = (cod: string): Tamanho[] => linhaDaVariacao(cod)?.grade ?? [];
 
-export const paresDoItem = (cod: string, it: Item) => gradeDe(cod).reduce((a, t) => a + (it.p[t.n] ?? 0), 0);
+// Só grade fechada: os pares de uma cor são as grades × os pares da grade da linha.
+export const paresDoItem = (cod: string, it: Item) => it.g * gradeDe(cod).reduce((a, t) => a + t.q, 0);
 
-// Quantas grades fechadas cabem nos pares escolhidos (o resto conta como avulso).
-export function gradesCompletas(cod: string, it: Item) {
-  const g = gradeDe(cod);
-  return g.length ? Math.min(...g.map((t) => Math.floor((it.p[t.n] ?? 0) / t.q))) : 0;
-}
-
-export function avulsosDoItem(cod: string, it: Item) {
-  const k = gradesCompletas(cod, it);
-  return Object.fromEntries(
-    gradeDe(cod)
-      .map((t) => [t.n, (it.p[t.n] ?? 0) - k * t.q] as const)
-      .filter(([, q]) => q > 0),
-  );
-}
-
-export const totalAvulsos = (cod: string, it: Item) => Object.values(avulsosDoItem(cod, it)).reduce((a, q) => a + q, 0);
+// Pares de cada numeração de uma cor (para mostrar a composição).
+export const paresPorTamanho = (cod: string, it: Item) => gradeDe(cod).map((t) => ({ n: t.n, pares: t.q * it.g }));
 
 export type Totais = {
   modelos: number;
   grades: number;
-  avulsos: number;
   pares: number;
   valor: number;
 };
 
 export function totais(itens: Estado["itens"]): Totais {
-  const t: Totais = { modelos: 0, grades: 0, avulsos: 0, pares: 0, valor: 0 };
+  const t: Totais = { modelos: 0, grades: 0, pares: 0, valor: 0 };
   for (const [cod, it] of Object.entries(itens)) {
     const l = linhaDaVariacao(cod);
     if (!l) continue;
     const p = paresDoItem(cod, it);
     if (!p) continue;
     t.modelos++;
-    t.grades += gradesCompletas(cod, it);
-    t.avulsos += totalAvulsos(cod, it);
+    t.grades += it.g;
     t.pares += p;
     t.valor += p * l.preco;
   }
@@ -55,7 +41,7 @@ export function porNumeracao(itens: Estado["itens"], grade: Tamanho[], cods: str
   const soma = Object.fromEntries(grade.map((t) => [t.n, 0]));
   for (const cod of cods) {
     const it = itens[cod];
-    if (it) for (const t of grade) soma[t.n] += it.p[t.n] ?? 0;
+    if (it) for (const t of grade) soma[t.n] += t.q * it.g;
   }
   return grade.map((t) => ({ n: t.n, pares: soma[t.n] }));
 }
@@ -66,7 +52,7 @@ export function porNumeracaoGeral(itens: Estado["itens"]) {
   const soma = new Map<string, number>();
   for (const [cod, it] of Object.entries(itens)) {
     for (const t of gradeDe(cod)) {
-      const q = it.p[t.n] ?? 0;
+      const q = t.q * it.g;
       if (q) soma.set(t.n, (soma.get(t.n) ?? 0) + q);
     }
   }
@@ -82,12 +68,7 @@ export function grupos(itens: Estado["itens"], incluirZerados = false): { linha:
 }
 
 export function descreverItem(cod: string, it: Item) {
-  const k = gradesCompletas(cod, it);
-  const av = Object.entries(avulsosDoItem(cod, it)).map(([n, q]) => `${n}: ${q}`);
-  const partes: string[] = [];
-  if (k) partes.push(plural(k, "grade", "grades"));
-  if (av.length) partes.push(k ? `avulsos ${av.join(", ")}` : av.join(", "));
-  return partes.join(" + ");
+  return plural(it.g, "grade", "grades");
 }
 
 export function faltandoNoFormulario(e: Estado) {
@@ -111,6 +92,9 @@ export function mensagem(e: Estado) {
   const t = totais(e.itens);
   const L: string[] = [];
   L.push(e.numero ? `*Pedido ${e.numero}* · catálogo ${LOJA.nome}` : `*Pedido pelo catálogo ${LOJA.nome}*`);
+  // Link do pedido com fotos (/separar/): quem atende abre e manda para quem separa.
+  const fotos = linkSeparar(e.numero, e.itens);
+  if (fotos) L.push(`Ver com fotos: ${fotos}`);
   L.push("");
   L.push(`Cliente: ${c.nome.trim() || "—"}`);
   if (c.loja.trim()) L.push(`Loja: ${c.loja.trim()}`);
@@ -135,7 +119,7 @@ export function mensagem(e: Estado) {
   }
 
   L.push("", `*Total: ${t.pares} pares · ${brl(t.valor)}*`);
-  L.push(`(${plural(t.grades, "grade fechada", "grades fechadas")}${t.avulsos ? ` + ${plural(t.avulsos, "par avulso", "pares avulsos")}` : ""})`);
+  L.push(`(${plural(t.grades, "grade", "grades")})`);
 
   L.push(`Numeração: ${porNumeracaoGeral(e.itens).map((x) => `${x.n}: ${x.pares}`).join(" · ")}`);
   for (const id of [...new Set(gs.map((g) => g.linha.gradeId))]) {

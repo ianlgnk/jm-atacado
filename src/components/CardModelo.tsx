@@ -6,7 +6,7 @@ import { linhaPorId, type Variacao } from "@/data/catalogo";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { brl } from "@/lib/formato";
 import { abrirSeTelaLarga } from "@/lib/painel";
-import { gradesCompletas, paresDoItem } from "@/lib/pedido";
+import { paresDoItem } from "@/lib/pedido";
 import { Foto } from "./Foto";
 import { GradeViva } from "./GradeViva";
 import { IconeMais, IconeMenos } from "./Icones";
@@ -25,7 +25,7 @@ export function CardModelo({
   const e = usePedido();
   const linha = linhaPorId(v.linhaId)!;
   const it = itemDe(e, v.cod);
-  const grades = gradesCompletas(v.cod, it);
+  const grades = it.g;
   const noPedido = paresDoItem(v.cod, it) > 0;
   const href = `/modelo/${v.cod.toLowerCase()}/`;
 

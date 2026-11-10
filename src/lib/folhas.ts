@@ -1,10 +1,10 @@
 "use client";
 
-// Qual folha está aberta por cima da página: numeração avulsa ou foto ampliada.
+// Qual folha está aberta por cima da página (hoje só a foto ampliada).
 
 import { useSyncExternalStore } from "react";
 
-export type Folha = { tipo: "numeracao" | "zoom"; cod: string } | null;
+export type Folha = { tipo: "zoom"; cod: string } | null;
 
 let atual: Folha = null;
 const ouvintes = new Set<() => void>();

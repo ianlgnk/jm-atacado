@@ -8,7 +8,7 @@ web
 
 ## Users
 
-Lojistas e revendedores que já compram da JM Calçados pelos vendedores da loja (hoje um só; outros vão usar o mesmo catálogo, por isso os textos do site dizem "a loja", nunca o nome de quem atende). Recebem o link no WhatsApp, abrem quase sempre no celular e montam um pedido de atacado em grades de 12 pares (a numeração muda com o público: feminina 33/34–39/40, masculina 37/38–43/44, juvenil 33/34–35/36, infantil 27/28–33/34) ou em pares avulsos por numeração. Muitos repõem os mesmos modelos de tempos em tempos.
+Lojistas e revendedores que já compram da JM Calçados pelos vendedores da loja (hoje um só; outros vão usar o mesmo catálogo, por isso os textos do site dizem "a loja", nunca o nome de quem atende). Recebem o link no WhatsApp, abrem quase sempre no celular e montam um pedido de atacado em grades de 12 pares (a numeração muda com o público: feminina 33/34–39/40, masculina 37/38–43/44, juvenil 33/34–35/36, infantil 27/28–33/34) — a fábrica não vende par a par, então o pedido é sempre em grades inteiras de cada cor. Muitos repõem os mesmos modelos de tempos em tempos.
 
 ## Product Purpose
 

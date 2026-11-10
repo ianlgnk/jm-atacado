@@ -7,7 +7,7 @@ export default function PaginaCatalogo() {
   return (
     <section className="wrap tela">
       <h1 className="titulo">Catálogo</h1>
-      <p className="sub">Toque em + para pôr uma grade de 12 pares. Toque na numeração para escolher par a par.</p>
+      <p className="sub">Toque em + para pôr uma grade fechada de 12 pares em cada cor.</p>
       <Catalogo />
     </section>
   );

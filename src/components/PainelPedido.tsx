@@ -74,14 +74,14 @@ export function PainelPedido() {
           <DesfazerRemocao />
           {gs.length ? (
             <>
-              <p className="nota">Digite os pares de cada numeração ou use “+ grade” para somar 2-4-4-2.</p>
+              <p className="nota">Use − e + para mudar quantas grades de cada cor. A venda é só em grade fechada.</p>
               {gs.map((g) => (
                 <Matriz key={g.linha.id} linha={g.linha} vars={g.vars} aoSair={sairNoCelular} />
               ))}
             </>
           ) : (
             <div className="painel-vazio">
-              <p className="sub">Toque em + nos modelos para montar o pedido. Ele aparece aqui, com as grades por numeração.</p>
+              <p className="sub">Toque em + nos modelos para montar o pedido. Ele aparece aqui, com as grades de cada cor.</p>
               <RepetirUltimo />
             </div>
           )}
@@ -91,8 +91,7 @@ export function PainelPedido() {
           <div className="painel-pe">
             <div className="painel-totais">
               <span>
-                {plural(t.grades, "grade", "grades")}
-                {t.avulsos ? ` + ${plural(t.avulsos, "avulso", "avulsos")}` : ""} · {plural(t.modelos, "modelo", "modelos")}
+                {plural(t.grades, "grade", "grades")} · {plural(t.modelos, "modelo", "modelos")}
               </span>
               <b>{brl(t.valor)}</b>
             </div>

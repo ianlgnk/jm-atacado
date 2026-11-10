@@ -1,33 +1,28 @@
-// A "grade viva": as numerações do modelo mostrando os pares que já estão no pedido.
-// Usado só dentro de componentes de cliente. Tocar abre o editor por numeração.
+// A "grade viva": as numerações da grade fechada da linha. Quando a cor entra no pedido,
+// as casinhas enchem de dourado com os pares de cada numeração. Só mostra: a fábrica não vende par a par.
+// Usado só dentro de componentes de cliente.
 
 import { linhaPorId, type Variacao } from "@/data/catalogo";
 import { itemDe, usePedido } from "@/lib/carrinho";
-import { abrirFolha } from "@/lib/folhas";
 
 export function GradeViva({ v }: { v: Variacao }) {
   const e = usePedido();
-  const it = itemDe(e, v.cod);
+  const { g } = itemDe(e, v.cod);
   const grade = linhaPorId(v.linhaId)!.grade;
-  const resumo = grade.map((t) => `${t.n}: ${it.p[t.n] ?? 0}`).join(", ");
+  const resumo = grade.map((t) => `${t.n}: ${t.q * g}`).join(", ");
 
   return (
-    <button
-      type="button"
-      className={`grade-viva${grade.length === 2 ? " grade-2" : ""}`}
-      disabled={v.esgotado}
-      onClick={() => abrirFolha({ tipo: "numeracao", cod: v.cod })}
-      aria-label={`Editar pares por numeração de ${v.cod}. No pedido: ${resumo}`}
+    <div
+      className={`grade-viva${grade.length === 2 ? " grade-2" : ""}${v.esgotado ? " esgotada" : ""}`}
+      role="img"
+      aria-label={g ? `No pedido: ${resumo}` : `Grade: ${grade.map((t) => `${t.n} ×${t.q}`).join(", ")}`}
     >
-      {grade.map((t) => {
-        const q = it.p[t.n] ?? 0;
-        return (
-          <span key={t.n} className={q ? "cheia" : undefined}>
-            <small>{t.n}</small>
-            <b>{q || "–"}</b>
-          </span>
-        );
-      })}
-    </button>
+      {grade.map((t) => (
+        <span key={t.n} className={g ? "cheia" : undefined}>
+          <small>{t.n}</small>
+          <b>{g ? t.q * g : `×${t.q}`}</b>
+        </span>
+      ))}
+    </div>
   );
 }

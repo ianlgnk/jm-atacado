@@ -11,7 +11,7 @@ import { brl } from "@/lib/formato";
 const DESTAQUES = ["AL-02", "GL-02", "EC-01", "AL-01"];
 
 const PASSOS = [
-  { titulo: "Escolha e monte a grade", texto: "Toque em + para pôr uma grade de 12 pares, ou escolha par a par em cada numeração." },
+  { titulo: "Escolha as cores e as grades", texto: "Toque em + para pôr uma grade fechada de 12 pares. Cada toque soma mais uma grade daquela cor." },
   { titulo: "Envie no WhatsApp", texto: "O pedido chega pronto no WhatsApp da loja, com cores, numeração e totais." },
   { titulo: "Pague depois de confirmar", texto: "A loja confere o estoque e manda a chave Pix na conversa. Você paga e manda o comprovante ali mesmo." },
 ];

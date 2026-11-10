@@ -1,6 +1,6 @@
 # JM Atacado
 
-Catálogo de atacado da JM Calçados. O lojista escolhe os modelos, monta grades fechadas ou pares avulsos e o pedido sai pronto para o WhatsApp de quem atende: o vendedor do link ou, sem link de vendedor, o atendimento da loja. Quem atende confere o estoque e manda a chave Pix (ou combina outra forma de pagamento) na conversa. Os textos do site não citam vendedor pelo nome, porque mais de um vendedor vai usar o catálogo.
+Catálogo de atacado da JM Calçados. O lojista escolhe os modelos e quantas grades fechadas de cada cor (a fábrica não vende par a par), e o pedido sai pronto para o WhatsApp de quem atende: o vendedor do link ou, sem link de vendedor, o atendimento da loja. Quem atende confere o estoque e manda a chave Pix (ou combina outra forma de pagamento) na conversa. Os textos do site não citam vendedor pelo nome, porque mais de um vendedor vai usar o catálogo.
 
 O site também sabe gerar QR Code Pix com o valor preenchido, mas hoje está desligado: a chave Pix fica vazia em `src/config/loja.ts`.
 
@@ -38,6 +38,12 @@ https://ianlgnk.github.io/jm-atacado/linha/al/?v=fabiola
 Quem abre por esse link manda o pedido, as dúvidas e a pergunta de reposição para o WhatsApp desse vendedor, e o aparelho guarda a escolha para as próximas visitas. Se a pessoa abrir depois o link de outro vendedor, passa a valer o novo. Sem `?v=`, vale o atendimento da loja. O "Compartilhar" de uma linha leva o `?v=` junto.
 
 Para pôr um vendedor novo, acrescente uma linha em `VENDEDORES` com id, nome e WhatsApp (só dígitos, com 55 e DDD).
+
+## Pedido com fotos (separação)
+
+A mensagem do pedido começa com um link "Ver com fotos". Ele abre `/separar/` com foto, código, cor, grades e pares por numeração de cada modelo, para quem atende tirar print, imprimir ou mandar para quem separa no estoque ("Enviar para quem separa"). Cada cor tem um "Separado" que fica guardado no aparelho.
+
+Não há servidor: o pedido inteiro vai no próprio link, depois do `#` (ex.: `/separar/#JM-1011-9DW_AL01x2_GL03x1`, código sem hífen e `x` grades). Dados do cliente não vão no link. Por isso os códigos (AL-01, GL-03…) não devem mudar: um link antigo com um código trocado mostraria outra foto.
 
 ## Publicar
 
