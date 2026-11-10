@@ -4,7 +4,7 @@ import { LinkSecao } from "@/components/LinkSecao";
 import { Foto } from "@/components/Foto";
 import { IconeCaminhao, IconeConferir, IconeFabrica, IconeRelogio, IconeSeta } from "@/components/Icones";
 import { VideoCapa } from "@/components/VideoCapa";
-import { LINHAS, TOTAL_MODELOS, VARIACOES } from "@/data/catalogo";
+import { LINHAS, PUBLICOS, TOTAL_MODELOS, VARIACOES } from "@/data/catalogo";
 import { LOJA } from "@/config/loja";
 import { brl } from "@/lib/formato";
 
@@ -85,19 +85,32 @@ export default function Inicio() {
             {LINHAS.length} linhas · {TOTAL_MODELOS} modelos
           </span>
         </div>
-        <div className="linhas">
-          {LINHAS.map((l) => (
-            <Link key={l.id} href={`/linha/${l.id}/`} className="linha-atalho">
-              <span className="linha-foto">
-                <Foto f={l.capa} sizes="160px" alt="" />
-              </span>
-              <b>{l.curto}</b>
-              <small>
-                {brl(l.preco)}/par · {l.variacoes.length} {l.rotulo}
-              </small>
-            </Link>
-          ))}
-        </div>
+        {PUBLICOS.map((p) => {
+          const linhas = LINHAS.filter((l) => l.publico === p.id);
+          return (
+            <div className="publico" key={p.id}>
+              <div className="publico-cab">
+                <h3>{p.nome}</h3>
+                <Link className="ver-tudo" href={`/catalogo/?f=${p.id}`}>
+                  {linhas.length} linhas <IconeSeta />
+                </Link>
+              </div>
+              <div className="linhas">
+                {linhas.map((l) => (
+                  <Link key={l.id} href={`/linha/${l.id}/`} className="linha-atalho">
+                    <span className="linha-foto">
+                      <Foto f={l.capa} sizes="160px" alt="" />
+                    </span>
+                    <b>{l.curto}</b>
+                    <small>
+                      {brl(l.preco)}/par · {l.variacoes.length} {l.rotulo}
+                    </small>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </section>
 
       <section className="wrap secao">

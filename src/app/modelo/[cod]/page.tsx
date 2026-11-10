@@ -5,7 +5,7 @@ import { CompraModelo } from "@/components/CompraModelo";
 import { Foto } from "@/components/Foto";
 import { IconeVoltar } from "@/components/Icones";
 import { TodasAsCores } from "@/components/TodasAsCores";
-import { VARIACOES, linhaPorId, paresPorGrade } from "@/data/catalogo";
+import { VARIACOES, linhaPorId, paresDaGrade } from "@/data/catalogo";
 import { brl } from "@/lib/formato";
 
 export const dynamicParams = false;
@@ -28,7 +28,7 @@ export default async function PaginaModelo({ params }: PageProps<"/modelo/[cod]"
   const v = achar(cod);
   if (!v) notFound();
   const l = linhaPorId(v.linhaId)!;
-  const grade = paresPorGrade(l.categoria);
+  const grade = paresDaGrade(l);
 
   return (
     <div className="wrap tela-modelo">

@@ -5,7 +5,7 @@
 
 import { useSyncExternalStore } from "react";
 import { LOJA } from "@/config/loja";
-import { CATEGORIAS, VARIACOES, linhaDaVariacao, linhaPorId } from "@/data/catalogo";
+import { VARIACOES, linhaDaVariacao, linhaPorId } from "@/data/catalogo";
 import { gradesCompletas, paresDoItem } from "./pedido";
 
 export type Item = { p: Record<string, number> }; // pares por numeração, ex.: { "35/36": 8 }
@@ -48,7 +48,7 @@ const VAZIO: Estado = {
   removido: null,
 };
 
-const gradeDe = (cod: string) => CATEGORIAS[linhaDaVariacao(cod)!.categoria].grade;
+const gradeDe = (cod: string) => linhaDaVariacao(cod)!.grade;
 
 // Mantém só modelos que existem e números inteiros positivos nas numerações da categoria.
 function limparItens(bruto: unknown): Record<string, Item> {

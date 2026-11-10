@@ -1,14 +1,11 @@
 // Contas do pedido e a mensagem que vai para o WhatsApp da vendedora.
 
 import { LOJA } from "@/config/loja";
-import { CATEGORIAS, LINHAS, linhaDaVariacao, type CategoriaId, type Linha, type Tamanho, type Variacao } from "@/data/catalogo";
+import { CATEGORIAS, GRADES, LINHAS, linhaDaVariacao, ordemNumeracao, type CategoriaId, type Linha, type Tamanho, type Variacao } from "@/data/catalogo";
 import type { Estado, Item, SeFaltar } from "./carrinho";
 import { brl, plural } from "./formato";
 
-const gradeDe = (cod: string): Tamanho[] => {
-  const l = linhaDaVariacao(cod);
-  return l ? CATEGORIAS[l.categoria].grade : [];
-};
+const gradeDe = (cod: string): Tamanho[] => linhaDaVariacao(cod)?.grade ?? [];
 
 export const paresDoItem = (cod: string, it: Item) => gradeDe(cod).reduce((a, t) => a + (it.p[t.n] ?? 0), 0);
 
@@ -59,16 +56,27 @@ export function totais(itens: Estado["itens"]): Totais {
   return t;
 }
 
-// Pares de cada numeração, somando todos os modelos de uma categoria.
-export function porNumeracao(itens: Estado["itens"], categoria: CategoriaId, cods?: string[]) {
-  const grade = CATEGORIAS[categoria].grade;
+// Pares de cada numeração de uma grade, somando os modelos indicados (as cores de uma linha).
+export function porNumeracao(itens: Estado["itens"], grade: Tamanho[], cods: string[]) {
   const soma = Object.fromEntries(grade.map((t) => [t.n, 0]));
-  for (const [cod, it] of Object.entries(itens)) {
-    if (cods && !cods.includes(cod)) continue;
-    if (linhaDaVariacao(cod)?.categoria !== categoria) continue;
-    for (const t of grade) soma[t.n] += it.p[t.n] ?? 0;
+  for (const cod of cods) {
+    const it = itens[cod];
+    if (it) for (const t of grade) soma[t.n] += it.p[t.n] ?? 0;
   }
   return grade.map((t) => ({ n: t.n, pares: soma[t.n] }));
+}
+
+// Pares de cada numeração no pedido todo. As linhas têm grades diferentes (infantil 27/28, masculina 43/44),
+// então junta todas as numerações que aparecem, em ordem.
+export function porNumeracaoGeral(itens: Estado["itens"]) {
+  const soma = new Map<string, number>();
+  for (const [cod, it] of Object.entries(itens)) {
+    for (const t of gradeDe(cod)) {
+      const q = it.p[t.n] ?? 0;
+      if (q) soma.set(t.n, (soma.get(t.n) ?? 0) + q);
+    }
+  }
+  return [...soma].sort(([a], [b]) => ordemNumeracao(a, b)).map(([n, pares]) => ({ n, pares }));
 }
 
 // incluirZerados: a tabela mostra também as cores que o lojista zerou mas ainda não removeu.
@@ -135,10 +143,9 @@ export function mensagem(e: Estado) {
   L.push("", `*Total: ${t.pares} pares · ${brl(t.valor)}*`);
   L.push(`(${plural(t.grades, "grade fechada", "grades fechadas")}${t.avulsos ? ` + ${plural(t.avulsos, "par avulso", "pares avulsos")}` : ""})`);
 
-  for (const cat of [...new Set(gs.map((g) => g.linha.categoria))]) {
-    const nome = CATEGORIAS[cat].nome.toLowerCase();
-    L.push(`Numeração (${nome}): ${porNumeracao(e.itens, cat).map((x) => `${x.n}: ${x.pares}`).join(" · ")}`);
-    L.push(`1 grade de ${nome} = ${CATEGORIAS[cat].grade.map((g) => `${g.n} ×${g.q}`).join(" · ")}`);
+  L.push(`Numeração: ${porNumeracaoGeral(e.itens).map((x) => `${x.n}: ${x.pares}`).join(" · ")}`);
+  for (const id of [...new Set(gs.map((g) => g.linha.gradeId))]) {
+    L.push(`1 grade ${GRADES[id].nome} = ${GRADES[id].tamanhos.map((g) => `${g.n} ×${g.q}`).join(" · ")}`);
   }
 
   if (LOJA.comissaoNaMensagem && t.pares) {

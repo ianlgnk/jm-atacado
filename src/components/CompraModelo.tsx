@@ -1,6 +1,6 @@
 "use client";
 
-import { CATEGORIAS, linhaPorId, paresPorGrade, VARIACOES } from "@/data/catalogo";
+import { linhaPorId, paresDaGrade, VARIACOES } from "@/data/catalogo";
 import { LOJA, linkWhatsAppVendedora } from "@/config/loja";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { brl, plural } from "@/lib/formato";
@@ -12,7 +12,7 @@ import { IconeMais, IconeMenos, IconeSacola } from "./Icones";
 export function CompraModelo({ cod }: { cod: string }) {
   const v = VARIACOES[cod];
   const linha = linhaPorId(v.linhaId)!;
-  const grade = CATEGORIAS[linha.categoria].grade;
+  const grade = linha.grade;
   const e = usePedido();
   const it = itemDe(e, cod);
   const pares = paresDoItem(cod, it);
@@ -40,7 +40,7 @@ export function CompraModelo({ cod }: { cod: string }) {
     <div className="compra">
       <div className="compra-cab">
         <h2>Numeração</h2>
-        <span>1 grade = {grade.map((t) => t.q).join("·")} ({paresPorGrade(linha.categoria)} pares)</span>
+        <span>1 grade = {grade.map((t) => t.q).join("·")} ({paresDaGrade(linha)} pares)</span>
       </div>
       <div className="compra-tamanhos">
         {grade.map((t) => {
@@ -62,7 +62,7 @@ export function CompraModelo({ cod }: { cod: string }) {
         })}
       </div>
       <button type="button" className="btn btn-tinta largo" onClick={comAbertura(() => pedido.maisGrade(cod))}>
-        <IconeMais /> Pôr 1 grade · {brl(paresPorGrade(linha.categoria) * linha.preco)}
+        <IconeMais /> Pôr 1 grade · {brl(paresDaGrade(linha) * linha.preco)}
       </button>
       {pares > 0 && (
         <div className="compra-resumo">

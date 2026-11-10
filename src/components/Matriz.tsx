@@ -1,6 +1,6 @@
 // Usado só dentro de componentes de cliente (PainelPedido, Pedido).
 import { LinkSecao } from "./LinkSecao";
-import { CATEGORIAS, type Linha, type Variacao } from "@/data/catalogo";
+import type { Linha, Variacao } from "@/data/catalogo";
 import { img } from "@/lib/caminho";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { abrirFolha } from "@/lib/folhas";
@@ -11,8 +11,8 @@ import { IconeFechar, IconeMais } from "./Icones";
 // Tabela de uma linha: cores nas linhas, numerações nas colunas, pares em cada célula.
 export function Matriz({ linha, vars, aoSair }: { linha: Linha; vars: Variacao[]; aoSair?: () => void }) {
   const e = usePedido();
-  const grade = CATEGORIAS[linha.categoria].grade;
-  const colunas = porNumeracao(e.itens, linha.categoria, vars.map((v) => v.cod));
+  const grade = linha.grade;
+  const colunas = porNumeracao(e.itens, grade, vars.map((v) => v.cod));
   const paresLinha = colunas.reduce((a, x) => a + x.pares, 0);
 
   return (
@@ -26,7 +26,7 @@ export function Matriz({ linha, vars, aoSair }: { linha: Linha; vars: Variacao[]
           <thead>
             <tr>
               <th scope="col" className="col-cor">
-                Cor
+                {linha.rotulo === "cores" ? "Cor" : "Estampa"}
               </th>
               {grade.map((t) => (
                 <th scope="col" key={t.n}>

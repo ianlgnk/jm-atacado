@@ -8,7 +8,7 @@ web
 
 ## Users
 
-Lojistas e revendedores que já compram da JM Calçados pela vendedora Fabíola. Recebem o link no WhatsApp, abrem quase sempre no celular e montam um pedido de atacado em grades (12 pares: 33/34 ×2 · 35/36 ×4 · 37/38 ×4 · 39/40 ×2) ou em pares avulsos por numeração. Muitos repõem os mesmos modelos de tempos em tempos.
+Lojistas e revendedores que já compram da JM Calçados pela vendedora Fabíola. Recebem o link no WhatsApp, abrem quase sempre no celular e montam um pedido de atacado em grades de 12 pares (a numeração muda com o público: feminina 33/34–39/40, masculina 37/38–43/44, juvenil 33/34–35/36, infantil 27/28–33/34) ou em pares avulsos por numeração. Muitos repõem os mesmos modelos de tempos em tempos.
 
 ## Product Purpose
 
@@ -28,7 +28,7 @@ Catálogo de atacado de Nova Serrana feito para o jeito que esse mercado já com
 ## Capabilities and Constraints
 
 - Site estático (Next.js com `output: "export"`), publicado no GitHub Pages em `/jm-atacado/`. Sem servidor, sem banco: o pedido fica no aparelho do lojista (localStorage).
-- Catálogo por linha (ex.: Havaianas Farm Pingente) com variações de cor/estampa, código (FP-13), preço por par, esgotado ou disponível.
+- Catálogo por linha (26 linhas, separadas em feminino, masculino e infantil) com variações de cor/estampa, código (FP-13), preço por par, esgotado ou disponível.
 - Pedido em pares por numeração; "grade" é atalho que soma 2-4-4-2. Opções "se faltar alguma cor", "repetir último pedido".
 - Hoje só chinelos; tênis e outras fábricas entram depois.
 - Nomes de cores/estampas e códigos ainda são provisórios.

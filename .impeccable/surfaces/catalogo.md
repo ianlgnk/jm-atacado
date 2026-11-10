@@ -11,7 +11,7 @@ WORLD (type, palette, density, signature move only):
 - Type: one variable grotesk with a width axis (Archivo). Heavy uppercase for headings, condensed width for codes, sizes and counts (echoing the condensed caps of the JM logo), tabular numerals for every quantity and price.
 - Density: two-column product grid on the phone, generous photo, tight data under it.
 - Surfaces separate by tone (paper / mist / white), not by borders; a border or ring only marks state (gold = in the order, ink = selected/focus). Client asked for fewer borders (nov/2026).
-- Signature move: "grade viva". Every product card carries the four numeração cells (33/34 · 35/36 · 37/38 · 39/40) as its size ledger; adding a grade fills them 2·4·4·2 in gold, and the same cells open the per-size editor. The order is visible on the shelf, not only in the bag.
+- Signature move: "grade viva". Every product card carries its line's numeração cells as its size ledger (four for feminina/masculina/infantil, two for juvenil); adding a grade fills them in gold, and the same cells open the per-size editor. The order is visible on the shelf, not only in the bag.
 
 SHELL:
 - Phone: top bar (logo, search), fixed bottom tabs (Início · Catálogo · Pedido · WhatsApp), mini order strip above the tabs when the order has pairs, order as a bottom sheet with the cores × numeração table.

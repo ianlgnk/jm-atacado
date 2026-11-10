@@ -5,7 +5,7 @@ import { BotaoCompartilhar } from "@/components/BotaoCompartilhar";
 import { CardModelo } from "@/components/CardModelo";
 import { IconeVoltar } from "@/components/Icones";
 import { TodasAsCores } from "@/components/TodasAsCores";
-import { CATEGORIAS, LINHAS, linhaPorId, paresPorGrade } from "@/data/catalogo";
+import { LINHAS, linhaPorId, paresDaGrade } from "@/data/catalogo";
 import { brl } from "@/lib/formato";
 
 export const dynamicParams = false;
@@ -23,7 +23,7 @@ export default async function PaginaLinha({ params }: PageProps<"/linha/[id]">) 
   const { id } = await params;
   const l = linhaPorId(id);
   if (!l) notFound();
-  const grade = paresPorGrade(l.categoria);
+  const grade = paresDaGrade(l);
 
   return (
     <section className="wrap tela">
@@ -34,7 +34,7 @@ export default async function PaginaLinha({ params }: PageProps<"/linha/[id]">) 
         <div>
           <h1 className="titulo">{l.nome}</h1>
           <p className="modelo-valor">
-            <b>{brl(l.preco)}</b> o par · grade com {grade} pares {brl(l.preco * grade)} · {CATEGORIAS[l.categoria].grade.map((t) => `${t.n} ×${t.q}`).join(" · ")}
+            <b>{brl(l.preco)}</b> o par · grade com {grade} pares {brl(l.preco * grade)} · {l.grade.map((t) => `${t.n} ×${t.q}`).join(" · ")}
           </p>
           <ul className="lista-feat em-linha">
             {l.descricao.map((d) => (

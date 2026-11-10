@@ -18,8 +18,9 @@ npm run dev
 | O quê | Arquivo |
 |---|---|
 | WhatsApp da vendedora, chave Pix, comissão na mensagem | `src/config/loja.ts` |
-| Produtos, preços, cores/estampas, esgotado | `src/data/catalogo.ts` |
-| Grade e comissão por categoria (chinelos 0,50 · tênis 1,00) | `CATEGORIAS` em `src/data/catalogo.ts` |
+| Produtos, preços, cores/estampas, esgotado, público de cada linha | `LINHAS` em `src/data/catalogo.ts` |
+| Grades de 12 pares (feminina, masculina, juvenil, infantil) | `GRADES` em `src/data/catalogo.ts` |
+| Comissão por categoria (chinelos 0,50 · tênis 1,00) | `CATEGORIAS` em `src/data/catalogo.ts` |
 | Fotos (`<linha>-<nn>-480.jpg` e `-1200.jpg`) | `public/img/` |
 | Vídeo da capa (Pexels, licença livre, pexels.com/video/8456413) | `public/video/` |
 | Texto da mensagem do pedido | `mensagem()` em `src/lib/pedido.ts` |
@@ -34,5 +35,6 @@ O site mora numa subpasta, então o build do Pages usa `NEXT_PUBLIC_BASE_PATH=/j
 ## Pendências
 
 - Confirmar o número de atendimento: o WhatsApp mostra (37) 9197-7372, com 8 dígitos.
-- Nomes das cores/estampas e códigos (GL-01, FP-13…) são provisórios.
+- O catálogo veio do grupo SISTEMA JM (fábrica), em 10/11/2026: 26 linhas, 384 cores/estampas. Os nomes das cores e estampas foram dados a partir das fotos; alguns são palpites e podem ser trocados em `LINHAS`.
+- Linhas de lançamento marcadas: Âmbar Lux, Glitter e Estrela (mudar em `lancamento`).
 - A linha "Comissão" vai na mensagem que o lojista envia, então ele também vê. Para tirar, `comissaoNaMensagem: false`.

@@ -2,17 +2,22 @@
 
 import { ViewTransition, addTransitionType, startTransition, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { EVENTO_BUSCAR } from "@/lib/busca";
-import { LINHAS, VARIACOES } from "@/data/catalogo";
+import { LINHAS, PUBLICOS, VARIACOES, type Publico } from "@/data/catalogo";
 import { normalizar, plural } from "@/lib/formato";
 import { BlocoTenis } from "./BlocoTenis";
 import { CardModelo } from "./CardModelo";
 import { IconeFechar, IconeLupa } from "./Icones";
 
-type Filtro = "todos" | "lancamentos" | "tenis" | string; // string = id da linha
+type Filtro = "todos" | "lancamentos" | "tenis" | Publico | string; // string = id da linha
 
-const FIXOS: [Filtro, string][] = [
+const ehPublico = (f: string): f is Publico => PUBLICOS.some((p) => p.id === f);
+
+// Primeira fileira: o público. Escolhido um público, a segunda fileira mostra as linhas dele.
+const FILEIRA_1: [Filtro, string][] = [
   ["todos", "Todos"],
   ["lancamentos", "Lançamentos"],
+  ...PUBLICOS.map((p) => [p.id, p.nome] as [Filtro, string]),
+  ["tenis", "Tênis"],
 ];
 
 const semAssinatura = () => () => {};
@@ -25,11 +30,11 @@ const CHEGA = { filtro: "card-chega", default: "none" };
 const SAI = { filtro: "card-sai", default: "none" };
 const MOVE = { filtro: "card-move", default: "none" };
 
-// Vitrine com todos os modelos. /catalogo/?f=lancamentos ou ?f=<linha> abre já filtrado.
+// Vitrine com todos os modelos. /catalogo/?f=lancamentos, ?f=feminino ou ?f=<linha> abre já filtrado.
 // O filtro do endereço é lido só no navegador (o servidor gera a vitrine com "Todos").
 export function Catalogo() {
   const daUrl = useSyncExternalStore(semAssinatura, filtroDaUrl, () => "todos");
-  const valido = (f: string) => ["todos", "lancamentos", "tenis", "chinelos"].includes(f) || LINHAS.some((l) => l.id === f);
+  const valido = (f: string) => ["todos", "lancamentos", "tenis", "chinelos"].includes(f) || ehPublico(f) || LINHAS.some((l) => l.id === f);
   const [escolhido, setFiltro] = useState<Filtro | null>(null);
   const filtro: Filtro = escolhido ?? (valido(daUrl) ? (daUrl === "chinelos" ? "todos" : daUrl) : "todos");
   const [busca, setBusca] = useState(""); // o que está no campo, na hora
@@ -84,9 +89,19 @@ export function Catalogo() {
       ? todos.filter((v) => LINHAS.find((l) => l.id === v.linhaId)?.lancamento)
       : filtro === "todos"
         ? todos
-        : todos.filter((v) => v.linhaId === filtro);
+        : ehPublico(filtro)
+          ? todos.filter((v) => LINHAS.find((l) => l.id === v.linhaId)?.publico === filtro)
+          : todos.filter((v) => v.linhaId === filtro);
 
-  const chips: [Filtro, string][] = [...FIXOS, ...LINHAS.map((l) => [l.id, l.curto] as [Filtro, string]), ["tenis", "Tênis"]];
+  const publicoAtivo: Publico | null = termo ? null : ehPublico(filtro) ? filtro : (LINHAS.find((l) => l.id === filtro)?.publico ?? null);
+  const linhasDoPublico = publicoAtivo ? LINHAS.filter((l) => l.publico === publicoAtivo) : [];
+  const escolher = (id: Filtro) => {
+    setBusca("");
+    trocar(() => {
+      setFiltro(id);
+      setBuscada("");
+    });
+  };
   const mostraTenis = !termo && filtro === "tenis";
   const cards = mostraTenis ? [] : lista;
 
@@ -117,25 +132,31 @@ export function Catalogo() {
           </button>
         )}
       </div>
-      <div className="chips" role="group" aria-label="Filtrar por linha">
-        {chips.map(([id, rotulo]) => (
+      <div className="chips" role="group" aria-label="Filtrar por público">
+        {FILEIRA_1.map(([id, rotulo]) => (
           <button
             key={id}
             type="button"
             className="chip"
-            aria-pressed={filtro === id && !termo}
-            onClick={() => {
-              setBusca("");
-              trocar(() => {
-                setFiltro(id);
-                setBuscada("");
-              });
-            }}
+            aria-pressed={!termo && (filtro === id || publicoAtivo === id)}
+            onClick={() => escolher(id)}
           >
             {rotulo}
           </button>
         ))}
       </div>
+      {publicoAtivo && (
+        <div className="chips chips-linhas" role="group" aria-label={`Linhas ${PUBLICOS.find((p) => p.id === publicoAtivo)!.nome.toLowerCase()}`}>
+          <button type="button" className="chip" aria-pressed={filtro === publicoAtivo} onClick={() => escolher(publicoAtivo)}>
+            Todas
+          </button>
+          {linhasDoPublico.map((l) => (
+            <button key={l.id} type="button" className="chip" aria-pressed={filtro === l.id} onClick={() => escolher(l.id)}>
+              {l.curto}
+            </button>
+          ))}
+        </div>
+      )}
 
       {mostraTenis ? (
         <BlocoTenis />

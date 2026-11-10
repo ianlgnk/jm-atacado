@@ -1,6 +1,6 @@
 "use client";
 
-import { linhaPorId, paresPorGrade } from "@/data/catalogo";
+import { linhaPorId, paresDaGrade } from "@/data/catalogo";
 import { pedido, usePedido } from "@/lib/carrinho";
 import { brl } from "@/lib/formato";
 import { abrirSeTelaLarga } from "@/lib/painel";
@@ -11,7 +11,7 @@ export function TodasAsCores({ linhaId }: { linhaId: string }) {
   const e = usePedido();
   const l = linhaPorId(linhaId)!;
   const cores = l.variacoes.filter((v) => !v.esgotado).length;
-  const pares = cores * paresPorGrade(l.categoria);
+  const pares = cores * paresDaGrade(l);
   if (!cores) return null;
 
   return (

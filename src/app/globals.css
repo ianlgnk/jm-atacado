@@ -151,7 +151,7 @@ svg { flex: none; }
 ::view-transition-new(.card-chega) { animation: card-chega .38s cubic-bezier(.25, 1, .5, 1) .12s both; } /* e só então chega: sem sobrepor */
 @keyframes card-sai { to { opacity: 0; scale: .96; } }
 @keyframes card-chega { from { opacity: 0; scale: .96; translate: 0 8px; } }
-.modelo { display: flex; flex-direction: column; min-width: 0; }
+.modelo { display: flex; flex-direction: column; min-width: 0; content-visibility: auto; contain-intrinsic-size: auto 380px; } /* com 384 modelos, só desenha os que estão perto da tela */
 .modelo.no-pedido .modelo-foto { outline: 2.5px solid var(--ouro); outline-offset: -2.5px; }
 .modelo-foto { position: relative; display: block; aspect-ratio: 4 / 5; background: var(--pedra); overflow: hidden; border-radius: var(--raio); }
 .modelo-foto img { width: 100%; height: 100%; object-fit: cover; transition: scale .5s cubic-bezier(.2, .7, .2, 1); }
@@ -179,6 +179,7 @@ svg { flex: none; }
 
 /* grade viva: as numerações do card mostram os pares no pedido */
 .grade-viva { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 100%; padding: 0; border: 0; background: none; text-align: center; }
+.grade-viva.grade-2 { grid-template-columns: repeat(2, 1fr); } /* juvenil: 33/34 e 35/36 */
 .grade-viva span { display: grid; align-content: center; min-height: 44px; padding: 5px 0; border-radius: 8px; background: var(--pedra); transition: background .25s, color .25s; }
 .grade-viva small { font-size: 11px; font-weight: 600; font-stretch: 70%; color: var(--suave); line-height: 1.1; }
 .grade-viva b { font-size: 13px; font-weight: 800; color: var(--suave); font-variant-numeric: tabular-nums; line-height: 1.2; }
@@ -204,14 +205,25 @@ svg { flex: none; }
 .chip { flex: none; height: 44px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--nevoa); font-weight: 600; font-size: 14px; white-space: nowrap; }
 .chip:hover { background: var(--pedra-2); }
 .chip[aria-pressed="true"] { background: var(--tinta); color: var(--papel); }
+/* segunda fileira (linhas do público escolhido): menor e em contorno de tom, para ler como um nível abaixo */
+.chips-linhas { margin-top: -2px; }
+.chips-linhas .chip { height: 40px; padding: 0 14px; font-size: 13.5px; background: transparent; box-shadow: inset 0 0 0 1.5px var(--pedra-2); }
+.chips-linhas .chip:hover { background: var(--nevoa); }
+.chips-linhas .chip[aria-pressed="true"] { background: var(--tinta); color: var(--papel); box-shadow: none; }
+.chips-linhas .chip::after { content: ""; position: absolute; inset: -2px 0; } /* toque de 44px */
+.chips-linhas .chip { position: relative; }
 .nada { padding: 36px 0; text-align: center; }
 .nada p { margin: 0 0 6px; font-weight: 700; }
 
 /* linhas (início) */
 .linhas { display: grid; grid-auto-flow: column; grid-auto-columns: 136px; gap: 12px; overflow-x: auto; margin: 0 -16px; padding: 0 16px 6px; scroll-padding-inline: 16px; scroll-snap-type: x mandatory; scrollbar-width: none; } /* sem o scroll-padding o encaixe gruda o 1º card na borda */
 .linhas::-webkit-scrollbar { display: none; }
-@media (min-width: 900px) { .linhas { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); margin: 0; padding: 0; scroll-padding-inline: 0; } }
+@media (min-width: 900px) { .linhas { grid-auto-flow: row; grid-template-columns: repeat(6, 1fr); margin: 0; padding: 0; scroll-padding-inline: 0; } }
 .linha-atalho { display: grid; gap: 2px; text-decoration: none; scroll-snap-align: start; }
+.publico { margin-top: 18px; }
+.publico:first-of-type { margin-top: 0; }
+.publico-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 10px; }
+.publico-cab h3 { margin: 0; font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
 .linha-foto { display: block; aspect-ratio: 1; border-radius: 16px; overflow: hidden; background: var(--pedra); margin-bottom: 6px; }
 .linha-foto img { width: 100%; height: 100%; object-fit: cover; transition: scale .5s cubic-bezier(.2, .7, .2, 1); }
 .linha-atalho:hover img { scale: 1.04; }

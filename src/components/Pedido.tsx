@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { LOJA } from "@/config/loja";
 import { pedido, usePedido, type Cliente, type FormaPagamento, type SeFaltar } from "@/lib/carrinho";
 import { brl, mascaraTelefone } from "@/lib/formato";
-import { TEXTO_SE_FALTAR, faltandoNoFormulario, grupos, porNumeracao, totais } from "@/lib/pedido";
+import { TEXTO_SE_FALTAR, faltandoNoFormulario, grupos, porNumeracaoGeral, totais } from "@/lib/pedido";
 import { IconeSeta, IconeVoltar } from "./Icones";
 import { DesfazerRemocao } from "./DesfazerRemocao";
 import { Matriz } from "./Matriz";
@@ -35,7 +35,6 @@ export function Pedido() {
   const gs = grupos(e.itens, true);
   const falta = faltandoNoFormulario(e);
   const invalido = (k: keyof Cliente) => tentou && falta.includes(k);
-  const categorias = [...new Set(grupos(e.itens).map((g) => g.linha.categoria))];
 
   // Vindo da folha do pedido (que trava a rolagem), a página abria no meio.
   useEffect(() => {
@@ -124,16 +123,14 @@ export function Pedido() {
               <span>Total de pares</span>
               <b>{t.pares}</b>
             </div>
-            {categorias.map((cat) => (
-              <div className="por-numeracao" key={cat}>
-                {porNumeracao(e.itens, cat).map((x) => (
-                  <span key={x.n}>
-                    <small>{x.n}</small>
-                    <b>{x.pares}</b>
-                  </span>
-                ))}
-              </div>
-            ))}
+            <div className="por-numeracao">
+              {porNumeracaoGeral(e.itens).map((x) => (
+                <span key={x.n}>
+                  <small>{x.n}</small>
+                  <b>{x.pares}</b>
+                </span>
+              ))}
+            </div>
             <div className="l total">
               <span>Total</span>
               <span>{brl(t.valor)}</span>

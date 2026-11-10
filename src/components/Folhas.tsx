@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CATEGORIAS, VARIACOES, linhaPorId, paresPorGrade } from "@/data/catalogo";
+import { VARIACOES, linhaPorId, paresDaGrade } from "@/data/catalogo";
 import { img } from "@/lib/caminho";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { prenderFocoEm } from "@/lib/foco";
@@ -43,14 +43,14 @@ export function Folhas() {
 function Numeracao({ cod }: { cod: string }) {
   const v = VARIACOES[cod];
   const linha = linhaPorId(v.linhaId)!;
-  const grade = CATEGORIAS[linha.categoria].grade;
+  const grade = linha.grade;
   const e = usePedido();
   const [tmp, setTmp] = useState<Record<string, number>>(() => ({ ...itemDe(e, cod).p }));
   const total = Object.values(tmp).reduce((a, q) => a + q, 0);
   const mudar = (n: string, d: number) => setTmp((s) => ({ ...s, [n]: Math.max(0, (s[n] ?? 0) + d) }));
   const umaGrade = () => setTmp((s) => Object.fromEntries(grade.map((t) => [t.n, (s[t.n] ?? 0) + t.q])));
   const grades = gradesCompletas(cod, { p: tmp });
-  const avulsos = total - grades * paresPorGrade(linha.categoria);
+  const avulsos = total - grades * paresDaGrade(linha);
 
   return (
     <div className="folha" role="dialog" aria-modal="true" aria-labelledby="num-t">
