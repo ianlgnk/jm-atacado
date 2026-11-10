@@ -32,6 +32,8 @@ export type Vendedor = Atendimento & { id: string; nome: string };
 // Sem ?v= o pedido vai para o atendimento da loja, acima. O id vai no link: minúsculo, sem acento nem espaço.
 export const VENDEDORES: Vendedor[] = [
   { id: "fabiola", nome: "Fabíola", whatsapp: "553791977372", exibir: "(37) 9197-7372" },
+  { id: "luiza", nome: "Luiza", whatsapp: "553791350773", exibir: "(37) 9135-0773" },
+  { id: "maycon", nome: "Maycon", whatsapp: "553799386262", exibir: "(37) 9938-6262" },
 ];
 
 export const linkWhatsApp = (texto: string, numero: string = LOJA.atendimento.whatsapp) =>
