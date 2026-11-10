@@ -13,7 +13,6 @@ const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"] });
 export const metadata: Metadata = {
   title: { default: `${LOJA.nome} · Pedido de atacado`, template: `%s · ${LOJA.nome}` },
   description: `Catálogo de atacado da ${LOJA.nome}: escolha os modelos, monte as grades e envie o pedido pelo WhatsApp.`,
-  icons: { icon: "/img/logo-160.jpg" },
   robots: { index: false, follow: false },
 };
 

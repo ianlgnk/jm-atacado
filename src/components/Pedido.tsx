@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LOJA } from "@/config/loja";
+import { img } from "@/lib/caminho";
 import { pedido, usePedido, type Cliente, type FormaPagamento } from "@/lib/carrinho";
 import { abrirFolha } from "@/lib/folhas";
 import { brl, mascaraTelefone } from "@/lib/formato";
@@ -95,7 +96,7 @@ export function Pedido() {
                   const p = paresDoItem(v.cod, it);
                   return (
                     <div className="item" key={v.cod}>
-                      <img src={`/img/${v.foto}-480.jpg`} alt="" loading="lazy" />
+                      <img src={img(`${v.foto}-480.jpg`)} alt="" loading="lazy" />
                       <div>
                         <div className="cab-item">
                           <b>

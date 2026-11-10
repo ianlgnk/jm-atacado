@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CATEGORIAS, VARIACOES, linhaPorId } from "@/data/catalogo";
+import { img } from "@/lib/caminho";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { fecharFolha, useFolha } from "@/lib/folhas";
 import { brl, plural } from "@/lib/formato";
@@ -96,7 +97,7 @@ function Zoom({ cod }: { cod: string }) {
       <button type="button" className="fechar" onClick={fecharFolha} aria-label="Fechar" data-foco="">
         ×
       </button>
-      <img src={`/img/${v.foto}-1200.jpg`} alt={`${linha.nome} ${v.nome}`} />
+      <img src={img(`${v.foto}-1200.jpg`)} alt={`${linha.nome} ${v.nome}`} />
       <p>
         {v.cod} · {v.nome} · {brl(linha.preco)} o par{v.esgotado ? " · esgotado" : ""}
       </p>

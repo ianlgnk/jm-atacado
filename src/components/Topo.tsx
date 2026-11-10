@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LOJA } from "@/config/loja";
+import { img } from "@/lib/caminho";
 import { usePedido } from "@/lib/carrinho";
 import { totais } from "@/lib/pedido";
 import { IconeSacola } from "./Icones";
@@ -24,7 +25,7 @@ export function Topo() {
     <header className="topo">
       <div className="wrap">
         <Link className="marca" href="/" aria-label={`${LOJA.nome}, início`}>
-          <img src="/img/logo-160.jpg" alt="" width={40} height={40} />
+          <img src={img("logo-160.jpg")} alt="" width={40} height={40} />
           <span>
             <b>{LOJA.nome}</b>
             <small>Atacado · Nova Serrana</small>

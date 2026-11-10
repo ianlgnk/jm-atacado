@@ -1,11 +1,12 @@
 import { LOJA, linkWhatsAppVendedora } from "@/config/loja";
+import { img } from "@/lib/caminho";
 
 export function Rodape() {
   return (
     <footer className="rodape">
       <div className="wrap">
         <div className="rodape-marca">
-          <img src="/img/logo-160.jpg" alt={`${LOJA.nome} Atendimento`} width={56} height={56} loading="lazy" />
+          <img src={img("logo-160.jpg")} alt={`${LOJA.nome} Atendimento`} width={56} height={56} loading="lazy" />
           <div>
             <b>{LOJA.nome} · Atendimento</b>
             <br />

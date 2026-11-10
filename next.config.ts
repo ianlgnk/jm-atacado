@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,
   images: { unoptimized: true },
+  // No GitHub Pages o site mora em /jm-atacado/ (o workflow define NEXT_PUBLIC_BASE_PATH).
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
 };
 
 export default nextConfig;

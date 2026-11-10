@@ -26,7 +26,9 @@ npm run dev
 
 ## Publicar
 
-`npm run build` gera a pasta `out/`. Qualquer hospedagem estática que aceite repositório privado serve (Cloudflare Pages, Netlify, Vercel): comando de build `npm run build`, pasta de saída `out`.
+Todo push no `main` publica sozinho em **https://ianlgnk.github.io/jm-atacado/** (workflow `.github/workflows/pages.yml`).
+
+O site mora numa subpasta, então o build do Pages usa `NEXT_PUBLIC_BASE_PATH=/jm-atacado`. Links com `next/link` recebem o prefixo sozinhos; imagens de `public/` usam `img()` de `src/lib/caminho.ts`.
 
 ## Pendências
 
