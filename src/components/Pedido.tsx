@@ -10,6 +10,7 @@ import { useAtendimento } from "@/lib/vendedor";
 import { TEXTO_SE_FALTAR, faltandoNoFormulario, grupos, porNumeracaoGeral, totais } from "@/lib/pedido";
 import { IconeSeta, IconeVoltar } from "./Icones";
 import { DesfazerRemocao } from "./DesfazerRemocao";
+import { BotaoEnviar, LembreteEnvio } from "./EnviarPedido";
 import { Matriz } from "./Matriz";
 import { RepetirUltimo } from "./RepetirUltimo";
 
@@ -78,15 +79,24 @@ export function Pedido() {
     );
   };
 
-  function continuar(ev: { preventDefault(): void }) {
-    ev.preventDefault();
+  // Confere os dados antes de sair para o WhatsApp (ou para o QR Code, quando houver chave Pix no site).
+  function podeEnviar() {
     setTentou(true);
     if (falta.length) {
       document.getElementById(`f-${falta[0]}`)?.focus();
-      return;
+      return false;
     }
-    if (!t.pares) return;
-    router.push("/pagamento/");
+    return t.pares > 0;
+  }
+
+  const comQrCode = PIX_NO_SITE && e.pagamento === "pix";
+
+  function continuar(ev: { preventDefault(): void }) {
+    ev.preventDefault();
+    if (!podeEnviar()) return;
+    // Enter num campo: o WhatsApp só abre com toque, então leva o foco ao botão de enviar.
+    if (comQrCode) router.push("/pagamento/");
+    else document.getElementById("enviar-pedido")?.focus();
   }
 
   return (
@@ -190,15 +200,21 @@ export function Pedido() {
                 O pedido está sem pares. Preencha a tabela ou use “+ grade”.
               </p>
             )}
-            <button type="submit" className="btn btn-tinta largo">
-              {PIX_NO_SITE && e.pagamento === "pix" ? "Continuar para o pagamento" : "Revisar e enviar"} <IconeSeta />
-            </button>
+            {comQrCode ? (
+              <button type="submit" className="btn btn-tinta largo">
+                Continuar para o pagamento <IconeSeta />
+              </button>
+            ) : (
+              <BotaoEnviar id="enviar-pedido" validar={podeEnviar} aoEnviar={() => router.push("/pagamento/")} />
+            )}
             <p className="nota aviso-envio">
-              O pedido vai para o WhatsApp de atendimento, {exibir}.
+              {comQrCode ? "" : "Envie o pedido antes de pagar: a loja confere o estoque e só então manda a chave Pix. "}O pedido vai para o WhatsApp de
+              atendimento, {exibir}.
             </p>
           </form>
         </aside>
       </div>
+      <LembreteEnvio aoEnviar={() => router.push("/pagamento/")} />
     </>
   );
 }

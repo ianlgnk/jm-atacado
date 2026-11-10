@@ -576,3 +576,6 @@ details.previa-msg[open] summary::after { content: "Fechar"; }
 }
 /* na página de separação a tira do pedido próprio só atrapalha (cobre o fim da lista) */
 body:has(.separar) .tira-pedido { display: none; }
+/* lembrete de enviar o pedido (cliente voltou para a página sem ter enviado) */
+.lembrete { display: grid; gap: 10px; }
+.lembrete p { margin: 0 0 6px; color: var(--tinta-2); font-size: 15px; }

@@ -33,6 +33,7 @@ export type Estado = {
   cliente: Cliente;
   ultimo: UltimoPedido | null;
   removido: { cod: string; item: Item } | null; // para "Desfazer" depois de remover uma cor
+  enviado: string; // assinatura do pedido quando o WhatsApp foi aberto com ele (vazio = ainda não)
 };
 
 const CHAVE = "jm-atacado-pedido-v2";
@@ -46,6 +47,7 @@ const VAZIO: Estado = {
   cliente: { nome: "", loja: "", cidade: "", uf: "", telefone: "", transportadora: "", obs: "" },
   ultimo: null,
   removido: null,
+  enviado: "",
 };
 
 // Mantém só modelos que existem, com um número inteiro de grades.
@@ -82,6 +84,7 @@ function carregar() {
         cliente: { ...VAZIO.cliente, ...(s.cliente || {}) },
         ultimo: s.ultimo?.itens ? { ...s.ultimo, itens: limparItens(s.ultimo.itens) } : null,
         removido: null,
+        enviado: typeof s.enviado === "string" ? s.enviado : "",
       };
     }
   } catch {
@@ -137,6 +140,15 @@ function gravarItens(novos: Record<string, Item>) {
 
 export const itemDe = (e: Estado, cod: string): Item => e.itens[cod] ?? { g: 0 };
 
+// O pedido conta como enviado enquanto não mudar depois de abrir o WhatsApp.
+const assinatura = (e: Estado) =>
+  `${e.numero}|${Object.keys(e.itens)
+    .sort()
+    .map((cod) => `${cod}:${e.itens[cod].g}`)
+    .join(",")}`;
+
+export const foiEnviado = (e: Estado) => e.enviado !== "" && e.enviado === assinatura(e);
+
 export const pedido = {
   maisGrade(cod: string) {
     gravarItens({ [cod]: { g: itemDe(ler(), cod).g + 1 } });
@@ -177,10 +189,11 @@ export const pedido = {
   seFaltar(op: SeFaltar) {
     mudar((e) => ({ ...e, seFaltar: op }));
   },
-  // Chamado ao abrir o WhatsApp: guarda o pedido para "Repetir último pedido".
+  // Chamado ao abrir o WhatsApp: guarda o pedido para "Repetir último pedido" e marca este pedido como enviado.
   registrarEnvio() {
     mudar((e) => ({
       ...e,
+      enviado: assinatura(e),
       ultimo: {
         itens: e.itens,
         quando: new Date().toISOString(),
@@ -196,6 +209,6 @@ export const pedido = {
   },
   // Limpa os itens e o número, mas guarda os dados do lojista e o último pedido.
   novo() {
-    mudar((e) => ({ ...e, itens: {}, numero: "", removido: null }));
+    mudar((e) => ({ ...e, itens: {}, numero: "", removido: null, enviado: "" }));
   },
 };

@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LOJA, linkWhatsApp } from "@/config/loja";
 import { useAtendimento } from "@/lib/vendedor";
-import { pedido, usePedido } from "@/lib/carrinho";
+import { foiEnviado, pedido, usePedido } from "@/lib/carrinho";
 import { brl } from "@/lib/formato";
 import { faltandoNoFormulario, mensagem, totais } from "@/lib/pedido";
 import { pixCopiaECola } from "@/lib/pix";
+import { BotaoEnviar, LembreteEnvio } from "./EnviarPedido";
 import { IconeCopiar, IconeVoltar, IconeWhatsApp } from "./Icones";
 
 export function Pagamento() {
@@ -16,7 +17,8 @@ export function Pagamento() {
   const t = totais(e.itens);
   const [svg, setSvg] = useState("");
   const [copiado, setCopiado] = useState(false);
-  const [enviado, setEnviado] = useState(false);
+  // Enviado = o WhatsApp já foi aberto com este pedido (fica guardado: vale ao voltar para o site).
+  const enviado = foiEnviado(e);
 
   const comPix = e.pagamento === "pix" && LOJA.pix.chave.trim() !== "";
   const codigoPix = comPix
@@ -85,10 +87,7 @@ export function Pagamento() {
           <button
             type="button"
             className="btn btn-contorno"
-            onClick={() => {
-              pedido.novo();
-              setEnviado(false);
-            }}
+            onClick={() => pedido.novo()}
           >
             Começar outro pedido
           </button>
@@ -145,26 +144,20 @@ export function Pagamento() {
 
         <div className="bloco">
           <p className="aviso-confirma">
-            <b>{comPix ? "Seu pedido só é confirmado depois que a loja receber o comprovante e a mensagem no WhatsApp." : "Seu pedido só é confirmado depois do pagamento."}</b>
+            <b>
+              {comPix
+                ? "Seu pedido só é confirmado depois que a loja receber o comprovante e a mensagem no WhatsApp."
+                : "Envie o pedido antes de pagar. A loja confere o estoque e só então você paga."}
+            </b>
           </p>
-          <a
-            className="btn btn-wa"
-            href={linkWhatsApp(mensagem(e), whatsapp)}
-            target="_blank"
-            rel="noopener"
-            onClick={() => {
-              pedido.registrarEnvio();
-              setEnviado(true);
-            }}
-          >
-            <IconeWhatsApp /> Enviar pedido no WhatsApp
-          </a>
+          <BotaoEnviar className="btn btn-wa" />
           <details className="previa-msg">
             <summary>Mensagem que vai para a loja</summary>
             <div className="msg">{mensagem(e)}</div>
           </details>
         </div>
       </div>
+      <LembreteEnvio />
     </>
   );
 }
