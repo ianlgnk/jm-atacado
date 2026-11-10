@@ -10,6 +10,7 @@ import { usePedido } from "@/lib/carrinho";
 import { alternarPainel, usePainel } from "@/lib/painel";
 import { totais } from "@/lib/pedido";
 import { IconeLupa, IconeSacola } from "./Icones";
+import { LinkSecao } from "./LinkSecao";
 
 const LINKS = [
   { href: "/", rotulo: "Início" },
@@ -51,15 +52,15 @@ export function Topo() {
         </Link>
         <nav className="nav-desk" aria-label="Seções">
           {LINKS.map((l) => (
-            <Link key={l.href} href={l.href} aria-current={ativo(l.href) ? "page" : undefined}>
+            <LinkSecao key={l.href} href={l.href} aria-current={ativo(l.href) ? "page" : undefined}>
               {l.rotulo}
-            </Link>
+            </LinkSecao>
           ))}
         </nav>
         <div className="topo-acoes">
           <button
             type="button"
-            className="icone-topo"
+            className="busca-topo"
             aria-label="Buscar no catálogo"
             onClick={() => {
               focarCampoTemporario();
@@ -68,6 +69,7 @@ export function Topo() {
             }}
           >
             <IconeLupa />
+            <span aria-hidden="true">Buscar no catálogo</span>
           </button>
           {naFinalizacao ? (
             <Link className="btn-pedido" href="/pedido/" aria-label={`Pedido: ${t.pares} pares`}>

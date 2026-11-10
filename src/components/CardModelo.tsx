@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { linhaPorId, type Variacao } from "@/data/catalogo";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
 import { brl } from "@/lib/formato";
@@ -11,7 +12,16 @@ import { GradeViva } from "./GradeViva";
 import { IconeMais, IconeMenos } from "./Icones";
 
 // Card da vitrine: foto, nome, preço, + para pôr uma grade e a grade viva embaixo.
-export function CardModelo({ v, sizes = "(min-width:1100px) 22vw, (min-width:700px) 30vw, 48vw" }: { v: Variacao; sizes?: string }) {
+// `ordem` escalona a entrada nas vitrines animadas (as 12 primeiras entram uma depois da outra).
+export function CardModelo({
+  v,
+  sizes = "(min-width:1100px) 22vw, (min-width:700px) 30vw, 48vw",
+  ordem,
+}: {
+  v: Variacao;
+  sizes?: string;
+  ordem?: number;
+}) {
   const e = usePedido();
   const linha = linhaPorId(v.linhaId)!;
   const it = itemDe(e, v.cod);
@@ -26,7 +36,10 @@ export function CardModelo({ v, sizes = "(min-width:1100px) 22vw, (min-width:700
   }
 
   return (
-    <article className={`modelo${noPedido ? " no-pedido" : ""}${v.esgotado ? " esgotado" : ""}`}>
+    <article
+      className={`modelo${noPedido ? " no-pedido" : ""}${v.esgotado ? " esgotado" : ""}`}
+      style={ordem === undefined ? undefined : ({ "--i": Math.min(ordem, 11) } as CSSProperties)}
+    >
       <Link href={href} className="modelo-foto" aria-label={`${v.nome}, ${linha.nome}, ver detalhes`}>
         <Foto f={v.foto} sizes={sizes} alt="" />
         {linha.lancamento && !v.esgotado && <span className="selo">Novo</span>}

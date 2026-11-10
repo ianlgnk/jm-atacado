@@ -47,12 +47,13 @@ export default async function PaginaLinha({ params }: PageProps<"/linha/[id]">) 
           <BotaoCompartilhar linhaId={l.id} />
         </div>
       </div>
-      <p className="contagem">
+      {/* #cores: o "+ outras cores" do pedido cai aqui, já na lista de cores */}
+      <p className="contagem" id="cores">
         {l.variacoes.length} {l.rotulo}
       </p>
-      <div className="vitrine">
-        {l.variacoes.map((v) => (
-          <CardModelo key={v.cod} v={v} />
+      <div className="vitrine anima">
+        {l.variacoes.map((v, i) => (
+          <CardModelo key={v.cod} v={v} ordem={i} />
         ))}
       </div>
     </section>

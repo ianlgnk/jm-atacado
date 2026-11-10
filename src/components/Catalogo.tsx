@@ -95,21 +95,25 @@ export function Catalogo() {
       </div>
 
       {!termo && filtro === "tenis" ? (
-        <BlocoTenis />
+        <div className="surge">
+          <BlocoTenis />
+        </div>
       ) : lista.length ? (
         <>
           <p className="contagem">
             {plural(lista.length, "modelo", "modelos")}
             {termo ? ` para “${busca.trim()}”` : ""}
           </p>
-          <div className="vitrine">
-            {lista.map((v) => (
-              <CardModelo key={v.cod} v={v} />
+          {/* A chave troca com o filtro: a vitrine remonta e os cards entram de novo, em sequência.
+              Durante a busca a chave fica parada; só os cards que passam a aparecer entram. */}
+          <div className="vitrine anima" key={termo ? "busca" : filtro}>
+            {lista.map((v, i) => (
+              <CardModelo key={v.cod} v={v} ordem={i} />
             ))}
           </div>
         </>
       ) : (
-        <div className="nada">
+        <div className="nada surge">
           <p>Nenhum modelo com “{busca.trim()}”.</p>
           <p className="nota">Tente uma cor (preta, azul), uma estampa (olho grego) ou um código (FP-13).</p>
         </div>

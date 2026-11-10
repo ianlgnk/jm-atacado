@@ -1,5 +1,5 @@
 // Usado só dentro de componentes de cliente (PainelPedido, Pedido).
-import Link from "next/link";
+import { LinkSecao } from "./LinkSecao";
 import { CATEGORIAS, type Linha, type Variacao } from "@/data/catalogo";
 import { img } from "@/lib/caminho";
 import { itemDe, pedido, usePedido } from "@/lib/carrinho";
@@ -101,9 +101,9 @@ export function Matriz({ linha, vars, aoSair }: { linha: Linha; vars: Variacao[]
         </table>
       </div>
       <div className="matriz-pe">
-        <Link className="mais-cores" href={`/linha/${linha.id}/`} onClick={aoSair}>
+        <LinkSecao className="mais-cores" href={`/linha/${linha.id}/#cores`} onClick={aoSair}>
           <IconeMais /> outras cores
-        </Link>
+        </LinkSecao>
         <span>
           {paresLinha} pares · <b>{brl(paresLinha * linha.preco)}</b>
         </span>

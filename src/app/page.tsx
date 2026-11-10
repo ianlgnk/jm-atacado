@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CardModelo } from "@/components/CardModelo";
+import { LinkSecao } from "@/components/LinkSecao";
 import { Foto } from "@/components/Foto";
 import { IconeCaminhao, IconeConferir, IconeFabrica, IconeRelogio, IconeSeta } from "@/components/Icones";
 import { VideoCapa } from "@/components/VideoCapa";
@@ -43,9 +44,9 @@ export default function Inicio() {
               <Link className="btn btn-tinta" href="/catalogo/">
                 Ver catálogo <IconeSeta />
               </Link>
-              <Link className="link-capa" href="/#como">
+              <LinkSecao className="link-capa" href="/#como">
                 Como funciona
-              </Link>
+              </LinkSecao>
             </div>
           </div>
         </div>
