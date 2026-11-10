@@ -12,7 +12,7 @@ import { GradeViva } from "./GradeViva";
 import { IconeMais, IconeMenos } from "./Icones";
 
 // Card da vitrine: foto, nome, preço, + para pôr uma grade e a grade viva embaixo.
-// `ordem` escalona a entrada nas vitrines animadas (as 12 primeiras entram uma depois da outra).
+// `ordem` escalona a entrada nas vitrines animadas (só a primeira tela entra em sequência).
 export function CardModelo({
   v,
   sizes = "(min-width:1100px) 22vw, (min-width:700px) 30vw, 48vw",
@@ -38,7 +38,7 @@ export function CardModelo({
   return (
     <article
       className={`modelo${noPedido ? " no-pedido" : ""}${v.esgotado ? " esgotado" : ""}`}
-      style={ordem === undefined ? undefined : ({ "--i": Math.min(ordem, 11) } as CSSProperties)}
+      style={ordem === undefined ? undefined : ({ "--i": Math.min(ordem, 8) } as CSSProperties)}
     >
       <Link href={href} className="modelo-foto" aria-label={`${v.nome}, ${linha.nome}, ver detalhes`}>
         <Foto f={v.foto} sizes={sizes} alt="" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { ViewTransition, addTransitionType, startTransition, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { EVENTO_BUSCAR } from "@/lib/busca";
 import { LINHAS, VARIACOES } from "@/data/catalogo";
 import { normalizar, plural } from "@/lib/formato";
@@ -18,6 +18,13 @@ const FIXOS: [Filtro, string][] = [
 const semAssinatura = () => () => {};
 const filtroDaUrl = () => new URLSearchParams(window.location.search).get("f") ?? "todos";
 
+// Troca de filtro ou de busca como transição de vista: o card que continua desliza até o novo lugar,
+// o que sai some encolhendo e o que chega cresce no lugar. Só anima com o tipo "filtro",
+// para a navegação entre páginas não arrastar os 43 cards junto.
+const CHEGA = { filtro: "card-chega", default: "none" };
+const SAI = { filtro: "card-sai", default: "none" };
+const MOVE = { filtro: "card-move", default: "none" };
+
 // Vitrine com todos os modelos. /catalogo/?f=lancamentos ou ?f=<linha> abre já filtrado.
 // O filtro do endereço é lido só no navegador (o servidor gera a vitrine com "Todos").
 export function Catalogo() {
@@ -25,24 +32,48 @@ export function Catalogo() {
   const valido = (f: string) => ["todos", "lancamentos", "tenis", "chinelos"].includes(f) || LINHAS.some((l) => l.id === f);
   const [escolhido, setFiltro] = useState<Filtro | null>(null);
   const filtro: Filtro = escolhido ?? (valido(daUrl) ? (daUrl === "chinelos" ? "todos" : daUrl) : "todos");
-  const [busca, setBusca] = useState("");
+  const [busca, setBusca] = useState(""); // o que está no campo, na hora
+  const [buscada, setBuscada] = useState(""); // o que a vitrine mostra, um instante depois de parar de digitar
+  const [trocou, setTrocou] = useState(false);
   const campo = useRef<HTMLInputElement>(null);
+  const espera = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Depois da primeira troca a entrada em sequência sai de cena e a transição de vista cuida dos cards.
+  function trocar(atualizar: () => void) {
+    clearTimeout(espera.current);
+    startTransition(() => {
+      addTransitionType("filtro");
+      setTrocou(true);
+      atualizar();
+    });
+  }
 
   // Lupa do topo: /catalogo/?busca=1 (vindo de outra página) ou o evento (já no catálogo).
   useEffect(() => {
     const focar = () => campo.current?.focus({ preventScroll: true });
     if (new URLSearchParams(window.location.search).has("busca")) focar();
     const aoBuscar = () => {
+      clearTimeout(espera.current);
       setFiltro("todos");
       setBusca("");
+      setBuscada("");
       focar();
       campo.current?.scrollIntoView({ block: "center", behavior: "smooth" });
     };
     window.addEventListener(EVENTO_BUSCAR, aoBuscar);
-    return () => window.removeEventListener(EVENTO_BUSCAR, aoBuscar);
+    return () => {
+      window.removeEventListener(EVENTO_BUSCAR, aoBuscar);
+      clearTimeout(espera.current);
+    };
   }, []);
 
-  const termo = normalizar(busca.trim());
+  function digitar(valor: string) {
+    setBusca(valor);
+    clearTimeout(espera.current);
+    espera.current = setTimeout(() => trocar(() => setBuscada(valor)), 160);
+  }
+
+  const termo = normalizar(buscada.trim());
   const todos = Object.values(VARIACOES);
   const lista = termo
     ? todos.filter((v) => {
@@ -56,6 +87,8 @@ export function Catalogo() {
         : todos.filter((v) => v.linhaId === filtro);
 
   const chips: [Filtro, string][] = [...FIXOS, ...LINHAS.map((l) => [l.id, l.curto] as [Filtro, string]), ["tenis", "Tênis"]];
+  const mostraTenis = !termo && filtro === "tenis";
+  const cards = mostraTenis ? [] : lista;
 
   return (
     <>
@@ -69,10 +102,17 @@ export function Catalogo() {
           placeholder="Cor, estampa ou código"
           aria-label="Buscar por cor, estampa ou código"
           value={busca}
-          onChange={(ev) => setBusca(ev.target.value)}
+          onChange={(ev) => digitar(ev.target.value)}
         />
         {busca && (
-          <button type="button" onClick={() => setBusca("")} aria-label="Limpar busca">
+          <button
+            type="button"
+            onClick={() => {
+              setBusca("");
+              trocar(() => setBuscada(""));
+            }}
+            aria-label="Limpar busca"
+          >
             <IconeFechar />
           </button>
         )}
@@ -85,8 +125,11 @@ export function Catalogo() {
             className="chip"
             aria-pressed={filtro === id && !termo}
             onClick={() => {
-              setFiltro(id);
               setBusca("");
+              trocar(() => {
+                setFiltro(id);
+                setBuscada("");
+              });
             }}
           >
             {rotulo}
@@ -94,30 +137,27 @@ export function Catalogo() {
         ))}
       </div>
 
-      {!termo && filtro === "tenis" ? (
-        <div className="surge">
-          <BlocoTenis />
-        </div>
+      {mostraTenis ? (
+        <BlocoTenis />
       ) : lista.length ? (
-        <>
-          <p className="contagem">
-            {plural(lista.length, "modelo", "modelos")}
-            {termo ? ` para “${busca.trim()}”` : ""}
-          </p>
-          {/* A chave troca com o filtro: a vitrine remonta e os cards entram de novo, em sequência.
-              Durante a busca a chave fica parada; só os cards que passam a aparecer entram. */}
-          <div className="vitrine anima" key={termo ? "busca" : filtro}>
-            {lista.map((v, i) => (
-              <CardModelo key={v.cod} v={v} ordem={i} />
-            ))}
-          </div>
-        </>
+        <p className="contagem">
+          {plural(lista.length, "modelo", "modelos")}
+          {termo ? ` para “${buscada.trim()}”` : ""}
+        </p>
       ) : (
-        <div className="nada surge">
-          <p>Nenhum modelo com “{busca.trim()}”.</p>
+        <div className="nada">
+          <p>Nenhum modelo com “{buscada.trim()}”.</p>
           <p className="nota">Tente uma cor (preta, azul), uma estampa (olho grego) ou um código (FP-13).</p>
         </div>
       )}
+      {/* A vitrine fica sempre montada: os cards que continuam deslizam em vez de piscar. */}
+      <div className={`vitrine${trocou ? "" : " anima"}`}>
+        {cards.map((v, i) => (
+          <ViewTransition key={v.cod} enter={CHEGA} exit={SAI} update={MOVE} default="none">
+            <CardModelo v={v} ordem={i} />
+          </ViewTransition>
+        ))}
+      </div>
     </>
   );
 }
