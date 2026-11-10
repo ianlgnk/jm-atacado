@@ -18,6 +18,7 @@ npm run dev
 | O quê | Arquivo |
 |---|---|
 | WhatsApp de atendimento, vendedores e seus números, chave Pix | `src/config/loja.ts` |
+| Estatística de acessos (token do Cloudflare Web Analytics) | `ESTATISTICA` em `src/config/loja.ts` |
 | Produtos, preços, cores/estampas, esgotado, público de cada linha | `LINHAS` em `src/data/catalogo.ts` |
 | Grades de 12 pares (feminina, masculina, juvenil, infantil) | `GRADES` em `src/data/catalogo.ts` |
 | Comissão por categoria (chinelos 0,50 · tênis 1,00) | `CATEGORIAS` em `src/data/catalogo.ts` |

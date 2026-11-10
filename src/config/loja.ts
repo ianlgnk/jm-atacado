@@ -37,5 +37,9 @@ export const LOJA = {
   },
 } as const;
 
+// Estatística de acessos: Cloudflare Web Analytics (grátis, sem cookies). O token vem do painel do Cloudflare
+// (Web Analytics > o site > "Manage site" > o trecho de JavaScript, valor de "token"). Vazio = sem estatística.
+export const ESTATISTICA = { cloudflareToken: "" };
+
 export const linkWhatsApp = (texto: string, numero: string = LOJA.atendimento.whatsapp) =>
   `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;

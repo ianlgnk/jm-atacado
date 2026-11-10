@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo } from "next/font/google";
+import Script from "next/script";
 import { AbasMobile } from "@/components/AbasMobile";
 import { BarraRolagem } from "@/components/BarraRolagem";
 import { Folhas } from "@/components/Folhas";
@@ -7,7 +8,7 @@ import { PainelPedido } from "@/components/PainelPedido";
 import { Rodape } from "@/components/Rodape";
 import { Topo } from "@/components/Topo";
 import { CapturaVendedor } from "@/components/WhatsAppAtendimento";
-import { LOJA } from "@/config/loja";
+import { ESTATISTICA, LOJA } from "@/config/loja";
 import "./globals.css";
 
 // Uma família só, com eixo de largura: títulos pesados, códigos e numerações condensados.
@@ -36,6 +37,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Folhas />
         <BarraRolagem />
         <CapturaVendedor />
+        {ESTATISTICA.cloudflareToken && (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({ token: ESTATISTICA.cloudflareToken, spa: true })}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );
