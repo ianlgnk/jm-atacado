@@ -12,9 +12,9 @@ export const LOJA = {
     exibir: "(37) 9197-7372",
   },
 
-  // Pix da tela de pagamento. Com `chave` vazia, a tela não mostra QR Code e a vendedora
-  // manda a chave pelo WhatsApp. Formatos da chave: CNPJ/CPF só números, e-mail,
-  // celular como +5537999999999 ou chave aleatória.
+  // Hoje a chave Pix NÃO fica no site: a vendedora confere o estoque e manda a chave no WhatsApp.
+  // Se um dia quiserem QR Code com o valor já preenchido, é só pôr a chave aqui. Formatos:
+  // CNPJ/CPF só números, e-mail, celular como +5537999999999 ou chave aleatória.
   pix: {
     chave: "",
     recebedor: "JM CALCADOS", // até 25 letras, sem acento

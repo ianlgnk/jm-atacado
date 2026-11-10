@@ -69,8 +69,11 @@ export function Pagamento() {
         <span className="eyebrow">Pedido {e.numero || ""}</span>
         <h1 className="titulo">Seu WhatsApp abriu com o pedido</h1>
         <p className="sub">
-          Confira a mensagem{e.pagamento === "pix" ? ", anexe o comprovante do Pix" : ""} e toque em enviar. A vendedora responde confirmando estoque, frete e
-          pagamento.
+          {comPix
+            ? "Confira a mensagem, anexe o comprovante do Pix e toque em enviar. A vendedora responde confirmando estoque e frete."
+            : e.pagamento === "pix"
+              ? "Confira a mensagem e toque em enviar. A vendedora confere o estoque e responde com a chave Pix; depois é só pagar e mandar o comprovante na mesma conversa."
+              : "Confira a mensagem e toque em enviar. A vendedora confere o estoque e combina com você o frete e a forma de pagamento."}
         </p>
         <div className="ctas" style={{ justifyContent: "center" }}>
           <a className="btn btn-wa" href={linkWhatsAppVendedora(mensagem(e))} target="_blank" rel="noopener" style={{ width: "auto" }}>
@@ -97,7 +100,7 @@ export function Pagamento() {
         ← Voltar ao pedido
       </Link>
       <span className="eyebrow">Pedido {e.numero}</span>
-      <h1 className="titulo">{e.pagamento === "pix" ? "Pagamento por Pix" : "Enviar pedido"}</h1>
+      <h1 className="titulo">{comPix ? "Pagamento por Pix" : "Enviar pedido"}</h1>
       <div className="pagamento">
         <div className="bloco destaque-total">
           <span className="lbl">Total do pedido</span>
@@ -126,18 +129,20 @@ export function Pagamento() {
           </div>
         )}
 
-        {e.pagamento === "pix" && !comPix && (
+        {!comPix && (
           <div className="bloco">
-            <b>Chave Pix</b>
-            <p className="nota" style={{ marginTop: 6 }}>
-              A vendedora manda a chave Pix no WhatsApp assim que receber o pedido.
-            </p>
+            <span className="lbl">Como funciona</span>
+            <ol className="passos-pix">
+              <li>Você envia o pedido no WhatsApp da vendedora.</li>
+              <li>Ela confere o estoque e {e.pagamento === "pix" ? "manda a chave Pix" : "combina a forma de pagamento"} na conversa.</li>
+              <li>{e.pagamento === "pix" ? "Você paga e manda o comprovante ali mesmo." : "Você paga do jeito combinado."}</li>
+            </ol>
           </div>
         )}
 
         <div className="bloco">
           <p className="aviso-confirma">
-            <b>Seu pedido só é confirmado depois que a vendedora receber{e.pagamento === "pix" ? " o comprovante e" : ""} a mensagem no WhatsApp.</b>
+            <b>{comPix ? "Seu pedido só é confirmado depois que a vendedora receber o comprovante e a mensagem no WhatsApp." : "Seu pedido só é confirmado depois do pagamento."}</b>
           </p>
           <a className="btn btn-wa" href={linkWhatsAppVendedora(mensagem(e))} target="_blank" rel="noopener" onClick={() => setEnviado(true)}>
             <IconeWhatsApp /> Enviar pedido no WhatsApp

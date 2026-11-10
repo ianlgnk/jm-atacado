@@ -1,6 +1,8 @@
 # JM Atacado
 
-Catálogo de atacado da JM Calçados (vendedora: Fabíola). O lojista escolhe os modelos, monta grades fechadas ou pares avulsos, paga no Pix (QR Code com o valor) ou combina outra forma, e o pedido sai pronto para o WhatsApp da vendedora, com a comissão calculada.
+Catálogo de atacado da JM Calçados (vendedora: Fabíola). O lojista escolhe os modelos, monta grades fechadas ou pares avulsos e o pedido sai pronto para o WhatsApp da vendedora, com a comissão calculada. A vendedora confere o estoque e manda a chave Pix (ou combina outra forma de pagamento) na conversa.
+
+O site também sabe gerar QR Code Pix com o valor preenchido, mas hoje está desligado: a chave Pix fica vazia em `src/config/loja.ts`.
 
 Next.js 16 gerado como site estático (`out/`). Sem servidor e sem banco por enquanto: o pedido fica salvo no aparelho do lojista.
 
@@ -28,7 +30,6 @@ npm run dev
 
 ## Pendências
 
-- Chave Pix da JM em `src/config/loja.ts` (sem ela, a tela de pagamento pede a chave pelo WhatsApp).
 - Confirmar o número de atendimento: o WhatsApp mostra (37) 9197-7372, com 8 dígitos.
 - Nomes das cores/estampas e códigos (GL-01, FP-13…) são provisórios.
 - A linha "Comissão" vai na mensagem que o lojista envia, então ele também vê. Para tirar, `comissaoNaMensagem: false`.

@@ -10,8 +10,16 @@ import { brl, mascaraTelefone } from "@/lib/formato";
 import { avulsos, descreverItem, faltandoNoFormulario, grupos, paresDoItem, totais } from "@/lib/pedido";
 import { Stepper } from "./Stepper";
 
+const PIX_NO_SITE = LOJA.pix.chave.trim() !== "";
+
 const PAGAMENTOS: { id: FormaPagamento; titulo: string; texto: string }[] = [
-  { id: "pix", titulo: "Pix", texto: "Você paga pelo QR Code na próxima tela e manda o comprovante junto com o pedido." },
+  {
+    id: "pix",
+    titulo: "Pix",
+    texto: PIX_NO_SITE
+      ? "Você paga pelo QR Code na próxima tela e manda o comprovante junto com o pedido."
+      : "A vendedora confere o estoque e manda a chave Pix no WhatsApp.",
+  },
   { id: "combinar", titulo: "Combinar no WhatsApp", texto: "Boleto, cartão ou outra forma: você acerta com a vendedora na conversa." },
 ];
 
@@ -194,7 +202,7 @@ export function Pedido() {
               </p>
             )}
             <button type="submit" className="btn btn-ouro largo">
-              Continuar para {e.pagamento === "pix" ? "o pagamento" : "o envio"} →
+              {PIX_NO_SITE && e.pagamento === "pix" ? "Continuar para o pagamento →" : "Revisar e enviar →"}
             </button>
             <p className="nota aviso-envio">O pedido vai para o WhatsApp de {LOJA.vendedora.nome}, {LOJA.vendedora.exibir}.</p>
           </form>

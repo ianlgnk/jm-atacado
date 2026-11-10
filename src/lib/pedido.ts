@@ -78,7 +78,8 @@ export function mensagem(e: Estado) {
   L.push(`Cidade: ${c.cidade.trim() || "—"}${c.uf.trim() ? " / " + c.uf.trim().toUpperCase() : ""}`);
   if (c.telefone.trim()) L.push(`Telefone: ${c.telefone.trim()}`);
   L.push(`Transportadora: ${c.transportadora.trim() || "a combinar"}`);
-  L.push(`Pagamento: ${e.pagamento === "pix" ? "Pix (comprovante em anexo)" : "combinar no WhatsApp"}`);
+  const pix = LOJA.pix.chave.trim() ? "Pix (comprovante em anexo)" : "Pix (aguardo a chave)";
+  L.push(`Pagamento: ${e.pagamento === "pix" ? pix : "combinar no WhatsApp"}`);
 
   for (const { linha, vars } of grupos(e.itens)) {
     let pares = 0;

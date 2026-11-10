@@ -99,8 +99,8 @@ export default function Inicio() {
             </div>
             <div className="passo">
               <div className="n">03</div>
-              <h3>Pague e envie</h3>
-              <p>Pague no Pix e mande o pedido com o comprovante no WhatsApp, ou combine outra forma com a vendedora.</p>
+              <h3>Envie no WhatsApp</h3>
+              <p>O pedido chega pronto para a vendedora, que confere o estoque e manda o Pix ou combina outra forma de pagamento.</p>
             </div>
           </div>
         </div>
