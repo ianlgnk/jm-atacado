@@ -12,6 +12,8 @@ export const VENDEDORES: Vendedor[] = [
   { id: "fabiola", nome: "Fabíola", whatsapp: "553791977372", exibir: "(37) 9197-7372" },
   { id: "luiza", nome: "Luiza", whatsapp: "553791350773", exibir: "(37) 9135-0773" },
   { id: "maycon", nome: "Maycon", whatsapp: "553799386262", exibir: "(37) 9938-6262" },
+  { id: "vitoria", nome: "Vitória", whatsapp: "553791306167", exibir: "(37) 9130-6167" },
+  { id: "junia", nome: "Júnia", whatsapp: "553791517379", exibir: "(37) 9151-7379" },
 ];
 
 // Sem vendedor no link (?v=), o pedido e as dúvidas vão para este vendedor.
